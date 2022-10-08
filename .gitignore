@@ -1,0 +1,5 @@
+### Intellij ###
+
+.DS_Store
+java_code/modern_java/out/*
+java_code/modern_java/.idea/*

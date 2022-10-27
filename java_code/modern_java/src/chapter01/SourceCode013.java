@@ -30,6 +30,15 @@ public class SourceCode013 {
         List<Apple> heavyApples2 = filterApples(inventory, Apple::isHeavyApple);
         System.out.println(heavyApples2); // [Apple{color='green', weight=155}]
 
+        //메서드 전달에서 람다로
+        //( 자바 8사용처럼, Apple 클래스 내부에 isGreenApple, isHeavyApple이 정의되어있어야한다. 매번정의하는것은 귀찮으니 람다 사용)
+        List<Apple> greenApplesLambda = filterApples(inventory, (Apple a) -> "green".equals(a.getColor()));
+        System.out.println("lambda: "+greenApplesLambda); //lambda: [Apple{color='green', weight=80}, Apple{color='green', weight=155}]
+        List<Apple> heavyApplesLambda = filterApples(inventory, (Apple a) -> a.getWeight() > 150);
+        System.out.println("lambda: "+heavyApplesLambda); //lambda: [Apple{color='green', weight=155}]
+        List<Apple> other = filterApples(inventory, (Apple a) -> a.getWeight() < 80 || "red".equals(a.getColor()));
+        System.out.println("lambda: "+other); //lambda: [Apple{color='red', weight=120}]
+
     }
 
     /*======================================================*/

@@ -23,6 +23,7 @@
 * *파이프 라인이란? 
 컴퓨터 과학에서 파이프라인(영어: pipeline)은 한 데이터 처리 단계의 출력이 다음 단계의 입력으로 이어지는 형태로 연결된 구조
 
+* 첫장에서 등장한 예제코드 : <a href = "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter01/SourceCode011.java"> SourceCode011 </a>
 ---
 
 ## 1.2.3 동작파라미터화로 메서드에 코드전달하기
@@ -68,8 +69,7 @@ Apple 클래스와 getColor메서드가 있고, Apples 리스트를 포함하는
 
 ## 1.3.3 메서드 전달에서 람다로 : 예제
 메서드를 값으로 전달하는것은 유용한 기능이지만, isHeavyApple, isGreen 처럼 한두번만 사용할 메서드를 매번 정의하는 것은 귀찮은 일이다. 자바 8에서는 <b>람다</b>라는 새로운 개념을 이용해서 코드구현이 가능하다
-* 예제코드: ../java_code/modern_java/src/chapter01/SourceCode013 
-
+* 예제코드 :  <a href = "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter01/SourceCode013.java"> SourceCode013 </a>
 ## 1.4 스트림
 1.3 코드예제에서 filterApples를 사용했다. 라이브러리 메서드 <b> filter</b>를 이용하면 filterApples 메서드를 구현할 필요가 없다.
 예를들어 리스트에서 고가의 트랜잭션(거래)만 필터링한 후에 통화로 결과를 그룹해야한다면

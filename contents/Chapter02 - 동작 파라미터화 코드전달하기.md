@@ -36,6 +36,26 @@ List<Apple> heavyApples = filterApplesByWeight(inventory, 100);
 List<Apple> greenApples2 = filterApples(inventory, Color.GREEN, 0 ,true);
 List<Apple> heavyApples2 = filterApples(inventory, null, 150 ,false);
 ~~~
-true와 false는 뭘 의미하는지, 앞으로 요구사항이 바뀌었을대 유연하게 대응할수도 없다. 예를들어 사과의 크기,모양, 출하지 등으로 필터링하고 싶다면,.? filterApples에 어떤 기준으로 사과를 필터링할 것인지 효과적으로 전달할 수 있다면 더 좋을것이다.
+true와 false는 뭘 의미하는지, 앞으로 요구사항이 바뀌었을대 유연하게 대응할수도 없다. 예를들어 사과의 크기,모양, 출하지 등으로 필터링하고 싶다면..? filterApples에 어떤 기준으로 사과를 필터링할 것인지 효과적으로 전달할 수 있다면 더 좋을것이다.
 
 ## 2.2 동작파라미터화
+2.1절에서 파라미터를 추가하는 방법이 아닌 변화하는 요구사항에 유연하게 대응할 수 있는방법이 절실하다는 것을 확인했다.   
+사과의 어떤 속성에 기초해서 boolean값을 반환<sup>(예를들어 사과가 녹색인가? 150그램이상인가?)</sup>하는 방법이 있다. 참 또는 거짓을 반환하는 함수를 **프레디케이트** 라고 한다. **선택조건을 결정하는 인터페이스**를 정의하자  
+~~~java
+public interface ApplePredicate {
+    boolean test(Apple apple);
+}
+// 다양한 선택조건을 대표하는 여러버전의 ApplePredicate를 정의할 수 있다.
+class AppleHeavyWeightPredicate implements  ApplePredicate { .. }
+class AppleGreenColorPredicate implements  ApplePredicate { .. }
+~~~
+동작에 따라 filter메서드가 다르게 동작할 것이라고 예상할수 있다.  
+![chapter02-1](./img/chapter02-1.png)
+
+이를 **전략 디자인 패턴<sup> strategy design pattern</sup>** 이라한다.
+* 전략디자인 패턴은 각 알고리즘을 캡슐화 하는 알고리즘 팸리리를 정의해둔 다음에 런타임에 알고리즘을 선택하는 기법이다.  
+
+## 2.2.1 네번째 시도: 추상적 조건으로 필터링
+<a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter02/SourceCode022.java" >구현 코드 2.2.1 </a>  
+위코드로 2.1.에서 구현한 코드에 비해 더 유연한 코드를 얻었으며 가독성도 좋아졌다.  
+예를들어 무게가 150그램이 넘는 빨간 사과를 검색해달라고 부탁하면 우리는 ApplePredicate를 구현하는 클래스만 만들면된다. 우리가 전달한 ApplePredicate객체에 의해 filterApples 메서드의 동작이 결정된다. 즉, 우리는 filterApples의 동작을 파라미터 화 한것이다.

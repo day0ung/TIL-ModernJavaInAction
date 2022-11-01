@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 Apple 클래스와 getColor메서드가 있고, Apples 리스트를 포함하는 변수  inventory가 있다고 가정
 이때, 모든 녹색사과를 선택해서 리스트를 반환하려는 프로그램 구현
  */
+
 public class SourceCode013 {
     public static void main(String... args) {
         List<Apple> inventory = Arrays.asList(

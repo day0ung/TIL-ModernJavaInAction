@@ -1,4 +1,5 @@
-package chapter01;
+package chapter02;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +73,7 @@ public class SourceCode021 {
         List<Apple> result = new ArrayList<>();
         for (Apple apple : inventory) {
             if((flag && apple.getColor().equals(color)) ||
-               (!flag && apple.getWeight() > weight)) {
+                    (!flag && apple.getWeight() > weight)) {
                 result.add(apple);
             }
         }
@@ -116,6 +117,3 @@ public class SourceCode021 {
 
     }
 }
-
-
-

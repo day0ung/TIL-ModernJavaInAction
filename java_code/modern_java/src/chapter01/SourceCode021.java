@@ -19,8 +19,18 @@ public class SourceCode021 {
         System.out.println(greenApples); //[Apple{color=GREEN, weight=80}, Apple{color=GREEN, weight=155}]
 
         //2.1.2
+        //색상
         List<Apple> redApples = filterApplesByColor(inventory, Color.RED);
         System.out.println(redApples); // [Apple{color=RED, weight=120}]
+        //무게
+        List<Apple> heavyApples = filterApplesByWeight(inventory, 100);
+        System.out.println(heavyApples); //[Apple{color=GREEN, weight=155}, Apple{color=RED, weight=120}]
+
+        //2.1.3
+        List<Apple> greenApples2 = filterApples(inventory, Color.GREEN, 0 ,true);
+        List<Apple> heavyApples2 = filterApples(inventory, null, 150 ,false);
+
+
     }
 
 
@@ -35,7 +45,7 @@ public class SourceCode021 {
         return result;
     }
 
-    //2.1.2 색을 파라미터화
+    //2.1.2 색을 파라미터화 (색상 파라미터)
     public static List<Apple> filterApplesByColor(List<Apple> inventory, Color color) {
         List<Apple> result = new ArrayList<>();
         for (Apple apple : inventory) {
@@ -45,6 +55,30 @@ public class SourceCode021 {
         }
         return result;
     }
+
+    //2.1.2 색을 파라미터화  (무게 파라미터)
+    public static List<Apple> filterApplesByWeight(List<Apple> inventory, int weight) {
+        List<Apple> result = new ArrayList<>();
+        for (Apple apple : inventory) {
+            if (apple.getWeight() > weight) {
+                result.add(apple);
+            }
+        }
+        return result;
+    }
+
+    //2.1.3 가능한 모든속성으로 필터링
+    public static List<Apple> filterApples(List<Apple> inventory, Color color, int weight, boolean flag) {
+        List<Apple> result = new ArrayList<>();
+        for (Apple apple : inventory) {
+            if((flag && apple.getColor().equals(color)) ||
+               (!flag && apple.getWeight() > weight)) {
+                result.add(apple);
+            }
+        }
+        return result;
+    }
+
 
 
     //apple 클래스 정의

@@ -26,11 +26,11 @@ List<Apple> redApples = filterApplesByColor(inventory, Color.RED);
 
 List<Apple> heavyApples = filterApplesByWeight(inventory, 100);
 ~~~
-위 두 코드도 좋은 해결책이지만 <a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter01/SourceCode021.java" >구현 코드 2.1.2 </a> 를 보면, 대부분 중복된다.  
+위 두 코드도 좋은 해결책이지만 <a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter02/SourceCode021.java" >구현 코드 2.1.2 </a> 를 보면, 대부분 중복된다.  
 이는 소프트웨어 공학의 DRY<sup> don't repeat yourself (같은것을 반복하지 말것)</sup> 원칙을 어기는 것이다.  
 
 ## 2.1.3 세번째 시도: 가능한 모든 속성으로 필터링
-실전에서는 절대로 사용하지 말아야하는 코드, <a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter01/SourceCode021.java" >구현 코드 2.1.3 </a>
+실전에서는 절대로 사용하지 말아야하는 코드, <a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter02/SourceCode021.java" >구현 코드 2.1.3 </a>
 
 ~~~java
 List<Apple> greenApples2 = filterApples(inventory, Color.GREEN, 0 ,true);

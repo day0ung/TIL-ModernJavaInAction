@@ -58,4 +58,97 @@ class AppleGreenColorPredicate implements  ApplePredicate { .. }
 ## 2.2.1 네번째 시도: 추상적 조건으로 필터링
 <a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter02/SourceCode022.java" >구현 코드 2.2.1 </a>  
 위코드로 2.1.에서 구현한 코드에 비해 더 유연한 코드를 얻었으며 가독성도 좋아졌다.  
-예를들어 무게가 150그램이 넘는 빨간 사과를 검색해달라고 부탁하면 우리는 ApplePredicate를 구현하는 클래스만 만들면된다. 우리가 전달한 ApplePredicate객체에 의해 filterApples 메서드의 동작이 결정된다. 즉, 우리는 filterApples의 동작을 파라미터 화 한것이다.
+예를들어 무게가 150그램이 넘는 빨간 사과를 검색해달라고 부탁하면 우리는 ApplePredicate를 구현하는 클래스만 만들면된다. 우리가 전달한 ApplePredicate객체에 의해 filterApples 메서드의 동작이 결정된다. 즉, 우리는 filterApples의 동작을 파라미터 화 한것이다.  
+~~~java
+public class AppleRedAndHeavyPredicate implements ApplePredicate{
+    public boolean test(Apple apple){
+        return "red".equals(apple.getColor()) && apple.getWeight() >  150;
+    }
+}
+//return 하는 부분을 인자로 전달
+filterApple(inventory,  /*d인자*/);
+~~~
+> 퀴즈(2-1) 
+사과 리스트를 인수로 받아 다양한 방법으로 문자열을 생성  
+<a href= "https://github.com/day0ung/TIL-ModernJavaInAction/blob/main/java_code/modern_java/src/chapter02/SourceCode022.java" >구현 코드 2.2.1 - 퀴즈 (2-1) </a>  
+
+## 2.3.2 다섯번째 시도: 익명클래스 사용
+2.2에서 한 구현방법은 여러 클래스를 정의한 다음에 인스턴스화 해야한다.   
+**익명클래스** 는 자바의 지역클래스(블록낸부에 선언된 클래스)와 비슷한 개념이다. 익명클래스는 말 그대로 이름이 없는 클래스이다.  
+익명클래스를 이용하면 *클래스 선언과 인스턴스화를 동시*에 할수 있다.  
+~~~java
+List<Apple> redApples = filterApples(inventory, new ApplePredicate() { <- filterApples의 메서드 동작을 직접파라미터화
+            @Override
+            public boolean test(Apple a) {
+                return Color.RED.equals(a.getColor());
+            }
+        });
+~~~
+
+## 2.3.3 여섯번째 시도: 람다 표현식 사용
+~~~java
+List<Apple> result = filterApples(inventory, (Apple apple) -> Color.RED.equals(apple.getColor()));
+~~~
+
+
+## 2.3.4 일곱번째 시도: 리스트형식으로 추상화
+~~~java
+public interface Predicate<T> {boolean test(T t)};
+
+public static <T> List<T> filter(List<T> list, Predicate<T> p ){
+    List<T> result = new ArrayList<>();
+    for(T e: list){
+        if(p.test(e)){
+            result.add(e);
+        }
+    }
+    return result;
+}
+~~~
+이제 AppleClass에 국한되지 않고 다양한 변수를 받을수 있게되었다.
+
+## 동작파라미터화 요약
+*  클래스를 통한 동작 파라미터화
+~~~java
+public interface ApplePredicate
+public class AppleGreenColorPredicate implements ApplePerdicate {
+	public boolean test(Apple apple) {
+		return GREEN.equals(apple.getColor());
+	}
+}
+
+List<Apple> greenApples = filterApples(inventory, new AppleGreenColorPredicate());
+~~~
+
+*  익명 클래스를 통한 동작 파라미터화
+~~~java
+List<Apple> redApples = filterApples(inventory, new ApplePredicate() { 
+            @Override
+            public boolean test(Apple a) {
+                return Color.RED.equals(a.getColor());
+            }
+        });
+~~~
+*  람다를 통한 동작 파라미터화
+~~~java
+List<Apple> result = filterApples(inventory, (Apple apple) -> Color.RED.equals(apple.getColor()));
+~~~
+---
+ 자바 API의 많은 메서드는 정렬, 스레드, GUI 처리 등을 포함한 다양한 동작으로 파라미터화 할 수 있다.
+~~~java
+// ex) java.util.Comparator
+public interface Comparator<T> {
+	int compare(T o1, T o2)l
+}
+
+// anonymous class
+inventory.sort(new Comparator<Apple>() {
+	public int compare(Apple a1, Apple a2) {
+		return a1.getWeight().compareTo(a2.getWeight());
+	}
+});
+
+// lamda
+inventory.sort(
+	(Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+~~~

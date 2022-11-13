@@ -31,7 +31,43 @@ public class SourceCode022 {
         //A heavt GREEN apple
         //A heavt RED apple
         //A light RED apple
-        //
+
+        //2.3.2 익명클래스 사용
+        List<Apple> redApples = filterApples(inventory, new ApplePredicate() {
+            @Override
+            public boolean test(Apple a) {
+                return Color.RED.equals(a.getColor());
+            }
+        });
+        System.out.println("redApples:" +redApples); //redApples:[Apple{color=RED, weight=180}, Apple{color=RED, weight=120}]
+
+        //2.3.3 람다표현식 사용
+        List<Apple> result = filterApples(inventory, (Apple apple) -> Color.RED.equals(apple.getColor()));
+        System.out.println("result lambda:" +redApples); //result lambda:[Apple{color=RED, weight=180}, Apple{color=RED, weight=120}]
+
+
+        //퀴즈 2-2 익명클래스 문제 예시
+         class MeaningOfThis{
+         public final int value = 4;
+         public void doit(){
+             int value = 6;
+             Runnable r = new Runnable() {
+                 @Override
+                 public void run() {
+                     int value = 10;
+                     System.out.print("this.value"); //eror발생으로 문자열처리
+                 }
+             };
+             r.run();
+           }
+         }
+         /*
+         MeaningOfThis m = new MeaningOfThis();
+         m.doIt(); <-  이행의 출력결과는?
+
+         ::정답  this는 MeaningOfThis가 아니라 Runnable을 참조하므로 5가 정답!
+          */
+
     }
 
 
@@ -46,7 +82,7 @@ public class SourceCode022 {
         }
         return result;
     }
-
+    
     // 2.2 인터페이스 정의
     interface ApplePredicate {
         boolean test(Apple a);

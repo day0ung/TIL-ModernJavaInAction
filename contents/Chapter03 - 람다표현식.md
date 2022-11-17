@@ -18,5 +18,7 @@
  //람다코드
  Compare<Apple> byWeight = (Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight());
  ~~~
-
- 
+![chapter03](./img/chapter03.png)
+ * 파라미터 리스트 : Comparetor의 compare메서드 파타미터(사과두개)
+ * 화살표 : 화살표(->)는 람다의 파라미터와 바디를 구분한다
+ * 람다 바디 : 두 사과의 무게를 비교한다. 람다의 반환값에 해당하는 표현식

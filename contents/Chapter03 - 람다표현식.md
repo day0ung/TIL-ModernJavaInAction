@@ -26,6 +26,38 @@
  ## 3.2 어디에, 어떻게 람다를 사용할까?
  * 함수형 인터페이스
  * 함수 디스크립터
+ ### 함수형 인터페이스
+ **함수형인터페이스**는 정확히 하나의 추상메서드를 지정하는 인터페이스다  
+ chapter2에서 만든 Predicate\<T>가 함수형 인터페이스다. Predicate\<T>는 오직 하나의 추상메서드만 지정하기 때문이다
+~~~java
+//java.util.Comparator
+public interface Comparator<T>{ 
+    int compare(T o1, T o2);
+}
+
+//java.lang.Runnable
+public interface Runnable{ 
+    void run();
+}
+
+//java.util.comcurrent.Callable
+public interface Cllable<V>{ 
+    V call() throw Exception;
+}
+
+//java.awt.event.ActionListener
+public interface ActionListener extends EventListener{
+    void actionPerformed(ActionEvent e);
+}
+
+//java.security.PrivilegedAction
+public interface PrivilegedAction<T>{
+    T run();
+}
+~~~
+> 인터페이즈스는 **디폴트메서드**(인터페이스의 메서드를 구현하지 않은 클래스를 고려해서 기본 구현을 제공하는 바디를 포함하는 메서드)를 포함할 수 있다. 많은 디폴트 메서드가 있더라도 **추상 메서드가 오직 하나면** 함수형 인터페이스이다.
+
+
 
  ## 3.3 람다활용 : 실행 어라운드 패턴
  * 1단계: 동작파라미터화를 기억하라

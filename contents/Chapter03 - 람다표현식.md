@@ -95,6 +95,35 @@ public interface PrivilegedAction<T>{
  * Consumer
  * Function
 
+**Predicate**  <code>(T) → boolean </code>
+~~~java
+@FuncationalInterface
+public interface Predicate<T> {
+	boolean test(T t);
+}
+~~~
+**Consumer**  <code>(T) → void </code>
+~~~java
+@FuncationalInterface
+public interface Consumer<T> {
+	void accept(T t);
+}
+~~~
+**Function**  <code> (T) → R </code>
+~~~java
+@FuncionalInterface
+public interface Function<T, R> {
+	R apply(T t);
+}
+~~~
+
+**Supplier**  <code> () → T </code>
+~~~java
+@FunctionalInterface
+public interface Supplier<T> {
+	T get();
+}
+~~~
  ## 3.5 형식검사, 형식추론, 제약
 
  ## 3.6 메서드 참조

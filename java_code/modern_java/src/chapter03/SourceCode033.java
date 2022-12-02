@@ -21,4 +21,10 @@ public class SourceCode033 {
         }
     }
     //file을 열고 닫으려면 connection이 open/close의 동작은 항상 필요하다.
+
+    
+    public interface BufferedReaderProcessor {
+        String process(BufferedReader b) throws IOException;
+
+    }
 }

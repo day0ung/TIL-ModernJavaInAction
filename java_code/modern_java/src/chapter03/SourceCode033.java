@@ -12,6 +12,10 @@ public class SourceCode033 {
     public static void main(String[] args) throws IOException {
 
         System.out.println(processFile());
+        String result = processFile((BufferedReader br) -> br.readLine() );
+        System.out.println("4단계: "+ result);
+
+
 
     }
 
@@ -22,9 +26,17 @@ public class SourceCode033 {
     }
     //file을 열고 닫으려면 connection이 open/close의 동작은 항상 필요하다.
 
-    
+
+    //2단계, 함수형 인터페이스를 활용 BufferedReader -> String 과 IOException을 던질수 있는 인터페이스 생성
+    @FunctionalInterface
     public interface BufferedReaderProcessor {
         String process(BufferedReader b) throws IOException;
+    }
 
+    //3단계: 동작실행
+    public static String processFile(BufferedReaderProcessor p ) throws IOException{
+        try  (BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+              return p.process(br);
+        }
     }
 }

@@ -14,7 +14,8 @@ public class SourceCode033 {
         System.out.println(processFile());
         String result = processFile((BufferedReader br) -> br.readLine() );
         System.out.println("4단계: "+ result);
-
+        //두행을 처리하는 코드
+        String tworesult = processFile((BufferedReader br) -> br.readLine() + br.readLine() );
 
 
     }

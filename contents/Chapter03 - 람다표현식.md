@@ -22,6 +22,8 @@
  * 파라미터 리스트 : Comparetor의 compare메서드 파타미터(사과두개)
  * 화살표 : 화살표(->)는 람다의 파라미터와 바디를 구분한다
  * 람다 바디 : 두 사과의 무게를 비교한다. 람다의 반환값에 해당하는 표현식
+</br>
+</br>
 
  ## 3.2 어디에, 어떻게 람다를 사용할까?
  * 함수형 인터페이스
@@ -59,9 +61,12 @@ public interface PrivilegedAction<T>{
 ~~~
 > 인터페이스는 **디폴트메서드**(인터페이스의 메서드를 구현하지 않은 클래스를 고려해서 기본 구현을 제공하는 바디를 포함하는 메서드)를 포함할 수 있다. 많은 디폴트 메서드가 있더라도 **추상 메서드가 오직 하나면** 함수형 인터페이스이다.
 
-<a href= "https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode032.java"> 예제코드  </a> Runnable이 오직 하나의 추상메서드 run을 정의하는 함수형 인터페이스
+> <a href= "https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode032.java"> 예제코드  </a> Runnable이 오직 하나의 추상메서드 run을 정의하는 함수형 인터페이스
 
- ### 함수 디스크립터
+</br>
+</br>
+
+ ## 함수 디스크립터
  예를들어 Runnable 인터페이스의 유일한 추상메서드 run은 인수와 반환값이 없으므로(void 반환) Runnable 인터페이스는 인수화 반환값이 없는 시그니처로 생각할 수 있다.  
  ~~~java
  //1
@@ -72,12 +77,15 @@ public interface PrivilegedAction<T>{
  //2
  Predicate<Apple> p = (Apple a) -> a.getWeight(); 
  ~~~
-1번예제는 유효한 람다 포현식이다. fetch메서드의 반환형식은 Callable\<String>이다. T를 String으ㅡ로 대치했을때 Callable\<String> 메서드의 시그니처는 () -> String이 된다.
+
+1번예제는 유효한 람다 포현식이다. fetch메서드의 반환형식은 Callable\<String>이다. T를 String으로 대치했을때 Callable\<String> 메서드의 시그니처는 () -> String이 된다.
 
 2번의 예제에서 람다표현식 (Apple a) -> a.getWeight()의 시그니처는 (Apple) -> Integer 이므로 Predicate\<Apple>: \<Apple> -> boolean의 test메서드의 시그니처와 일치하지 않는다.
 
- **@FunctionallInterface 란?**  
+ ### **@FunctionallInterface 란?**  
 함수형 인터페이스임을 가리키는 어노테이션이다. @FunctionalInterface로 인터페이스를 선언했지만, 실제로 함수형 인터페이스가 아니면 컴파일러가 에러를 발생시킨다. 
+</br>
+</br>
 
  ## 3.3 람다활용 : 실행 어라운드 패턴
  * 1단계: 동작파라미터화를 기억하라
@@ -94,9 +102,7 @@ public interface PrivilegedAction<T>{
 1. 1단계: 동작파라미터화를 기억하라
 기존의 설정, 정리 과정은 재사용하고 processFile메서드만 다른 동작을 수행하도록 명령,
 BufferedReader를 이용해서 다른 동작을 수행할 수 있도록 메서드로 동작을 전달해야한다. 
-~~~java
- String result = processFile((BufferedReader br) -> br.readLine() + br.readLine());
-~~~
+
 2. 2단계: 함수형 인터페이스 이용해서 동작전달
 ~~~java
 @FunctionalInterface
@@ -104,11 +110,29 @@ BufferedReader를 이용해서 다른 동작을 수행할 수 있도록 메서�
         String process(BufferedReader b) throws IOException;
     }
 ~~~
+3. 3단계: 동작실행 (2단계 인터페이스에서 정의된 process메서드의 시그니처와 일치하는 람다를 전달할 수 있다.)
+
+~~~java
+public String processFile(BufferedReaderProcessor p ) throws IOException{
+    try(BufferedReader br = new BufferedReader(new FileReader('data.txt')) {
+        return p.process(br);
+    }
+}
+~~~
+4. 4단계
+~~~java
+ String result = processFile((BufferedReader br) -> br.readLine() + br.readLine());
+~~~
+> **예제코드** :  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode033.java">SourceCode033</a>
+
+</br>
+</br>
 
  ## 3.4 함수형 인터페이스 사용
  * Predicate
  * Consumer
  * Function
+ * 기본형 특화
 
 **Predicate**  <code>(T) → boolean </code>
 ~~~java
@@ -117,6 +141,10 @@ public interface Predicate<T> {
 	boolean test(T t);
 }
 ~~~
+Predicate는 test라는 추상메서드를 정의하며, test는 제네릭 형식의 T의 객체를 인수로 받아 불리언을 반환한다  
+Predicate 인터페이스의 java_doc명세를 보면 and나 or 같은 메서드도 있다
+
+
 **Consumer**  <code>(T) → void </code>
 ~~~java
 @FuncationalInterface
@@ -124,6 +152,8 @@ public interface Consumer<T> {
 	void accept(T t);
 }
 ~~~
+Consumer는 제네릭형식 T 객체를 받아서 void 반환하는 accept라는 추상메서드를 정의한다. T형식의 객체를 받아서 어떤 동작을 수행하고 싶을때 사용
+
 **Function**  <code> (T) → R </code>
 ~~~java
 @FuncionalInterface
@@ -131,6 +161,8 @@ public interface Function<T, R> {
 	R apply(T t);
 }
 ~~~
+Function는 제네릭 형식 T를 인수로 받아서 제네릭형식 R 객체를 반환하는 추상메서드 apply를 정의한다
+
 
 **Supplier**  <code> () → T </code>
 ~~~java
@@ -139,6 +171,19 @@ public interface Supplier<T> {
 	T get();
 }
 ~~~
+> **예제코드** :  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode033.java">SourceCode034</a>
+
+**기본형 특화**  
+자바의 모든형식은 참조형(Integer,Object,List) 아니면 기본형(int,double,char)에 해당한다. 제네릭파라미터 (ex: Consumer<T>의 T는 참조형만사용).  
+제네릭의 내부구현때문에 어쩔수 없다. 자바에서는 기본형을 참조형으로 변환하는 기능을 제공한다
+* 박싱(기본형 -> 참조형)
+* 언박싱(참조형 -> 기본형)
+* 오토박싱(프로그래머가 편리하게 코드를 구현할수 있도록 박싱/언박싱이 자동)
+
+이러한 변환과정은 비용이 소모된다. 박싱한 값은 기본형을 감싸는 래퍼며 힙에 저장된다. 따라서 박싱한 값은 메모리를 더 소비하여 기본형ㅇㄹ 가져올 때도 메모리를 탐색하는 과정이 필요하다. 
+
+
+
  ## 3.5 형식검사, 형식추론, 제약
 
  ## 3.6 메서드 참조

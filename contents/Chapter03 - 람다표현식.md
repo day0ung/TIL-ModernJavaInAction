@@ -89,6 +89,21 @@ public interface PrivilegedAction<T>{
 실제 자원을 처리하는 코드를 설정과 정리 두 과정이 둘러싸는 형태를 갖는다.
 고정된 설정과 정리 과정을 두고 실제 자원을 처리하는 코드를 설정과 과정리 두 과정이 둘러싸는 형태, 간단히 말하면 db검색을 하려면 connection(열고/닫고)를 꼭 해야한다.  
 이때 실제 자원을 처리하는 코드를 파라미터화 하고 람다를 통해 동작을 전달할 수 있다.  
+* ![](./img/chapter03-arround.png)
+
+1. 1단계: 동작파라미터화를 기억하라
+기존의 설정, 정리 과정은 재사용하고 processFile메서드만 다른 동작을 수행하도록 명령,
+BufferedReader를 이용해서 다른 동작을 수행할 수 있도록 메서드로 동작을 전달해야한다. 
+~~~java
+ String result = processFile((BufferedReader br) -> br.readLine() + br.readLine());
+~~~
+2. 2단계: 함수형 인터페이스 이용해서 동작전달
+~~~java
+@FunctionalInterface
+    public interface BufferedReaderProcessor {
+        String process(BufferedReader b) throws IOException;
+    }
+~~~
 
  ## 3.4 함수형 인터페이스 사용
  * Predicate

@@ -215,6 +215,34 @@ java.util.function의 함수형 인터페이스는 확인된 예외를 던지는
 4. 그 함수형 인터페이스의 함수 디스크립터를 묘사한다.
 5. 전달받은 인수의 람다가 그 요구사항을 만족해야 한다.
 
+**[형식추론]**  
+자바 컴파일러는 람다 표현식이 사용된 콘텍스트(대상형식)을 이용해서 람다 표현식과 관련된 함수형 인터페이스를 추론한다.   
+자바 컴파일러는 다음 처럼 람다 파라미터 형식을 추론할 수 있다.
+~~~java
+//형식을 추론하지 않음
+Comparatro<Apple> c = (Apple a1 , Apple a2) -> a1.getWeight().compareTo(a2.getWeight());
+
+//형식을 추론
+Comparatro<Apple> c = (a1 ,a2) -> a1.getWeight().compareTo(a2.getWeight());
+~~~
+
+**[지역변수]**  
+지금까지 살펴본 모든 람다 표현식은 인수를 자신의 바디안에서만 사용했다. 람다 표현식에서는 익명함수가 하는것처럼 *자유변수*를 활용할수 있다.
+* 자유변수: 파라미터로 넘겨진 변수가 아닌 외부에서 정의된 변수  
+
+이와같은 동작을 **람다캡처링** 이라고 부른다.
+~~~java
+//람다캡쳐링 예제
+int portNumber = 1337;
+Runnable r = () -> System.out.println(partNumber);
+
+//제약사항
+int portNumber = 1337;
+Runnable r = () -> System.out.println(partNumber);
+portNumber = 133347;
+~~~
+제약사항이 있는데, 람다에서 참고하는 지역벽수는 final로 선언되거나 실직적으로 final처럼 취급되어야한다.
+
 </br>
 </br>
 
@@ -224,11 +252,19 @@ java.util.function의 함수형 인터페이스는 확인된 예외를 던지는
 
  명시적으로 메서드 명을 참조함으로써 가독성을 높일 수 있다. 메서드 참조는 메서드명 앞에 **구분자(::)**를 붙이는 방식으로 사용할 수 있다. Class::method 형식을 취한다. 메서드 참조는 세 가지 유형으로 구분할 수 있다.
 
-정적 메서드 참조 - Integer::parseInt
-다양한 형식의 인스턴스 메서드 참조 - String::length
-기존 객체의 인스턴스 메서드 참조 - Apple::getWeight
+1. 정적 메서드 참조 - Integer::parseInt
+2. 다양한 형식의 인스턴스 메서드 참조 - String::length
+3. 기존 객체의 인스턴스 메서드 참조 - Apple::getWeight
 또한 ClassName::new 처럼 클래스명과 new 키워드를 이용해서 기존 생성자의 참조를 만들 수 있다.이는 정적 메서드의 참조를 만드는 방식과 비슷하다.
 
+* 메서드 참조 단축표현 예제 
+
+| 람다 | 예제 |
+|---|---|
+| (Apple a) -> a.getWeight() | Apple::getWeight|
+|() -> Thread.currentThread().dumpStack() | Thread.currentThread::dumpStack|
+| (str, i) -> str.subString(i) | String::substring |
+ 
  ## 3.7 람다, 메서드 참조 활용하기
  
 

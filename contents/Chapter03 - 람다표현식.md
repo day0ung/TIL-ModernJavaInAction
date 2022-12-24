@@ -234,14 +234,15 @@ Comparatro<Apple> c = (a1 ,a2) -> a1.getWeight().compareTo(a2.getWeight());
 ~~~java
 //람다캡쳐링 예제
 int portNumber = 1337;
-Runnable r = () -> System.out.println(partNumber);
+Runnable r = () -> System.out.println(portNumber);
 
 //제약사항
 int portNumber = 1337;
-Runnable r = () -> System.out.println(partNumber);
-portNumber = 133347;
+Runnable r = () -> System.out.println(portNumber);
+portNumber = 133347; // <- 컴파일 오류
 ~~~
 제약사항이 있는데, 람다에서 참고하는 지역벽수는 final로 선언되거나 실직적으로 final처럼 취급되어야한다.
+
 
 </br>
 </br>
@@ -257,6 +258,17 @@ portNumber = 133347;
 3. 기존 객체의 인스턴스 메서드 참조 - Apple::getWeight
 또한 ClassName::new 처럼 클래스명과 new 키워드를 이용해서 기존 생성자의 참조를 만들 수 있다.이는 정적 메서드의 참조를 만드는 방식과 비슷하다.
 
+### 생성자 참조
+인수가 없는 생성자, 즉 Supplier의 () -> Apple과 같은 시그니처를 갖는 생성자가 있다고 가정해보자
+~~~java
+//생성자 참조
+Supplier<Apple> c1 = Apple::new;
+Apple a1 = c1.get();
+
+Supplier<Apple> c1 = () -> new Apple();
+Apple a1 = c1.get();
+~~~
+
 * 메서드 참조 단축표현 예제 
 
 | 람다 | 예제 |
@@ -264,9 +276,30 @@ portNumber = 133347;
 | (Apple a) -> a.getWeight() | Apple::getWeight|
 |() -> Thread.currentThread().dumpStack() | Thread.currentThread::dumpStack|
 | (str, i) -> str.subString(i) | String::substring |
- 
+
+3가지 종류의 람다표현식을 메서드 참조로 바꾸는 방법
+
+~~~java
+1. [람다]   
+        (args) -> ClassName.staticMethod(args)
+   [메서드 참조]
+        ClassName::staticMethod
+
+2. [람다]   
+        (arg0, rest) -> arg0.instanceMethod(rest)
+   [메서드 참조]
+        ClassName::instanceMethod //arg0은 ClassName형식
+
+3. [람다]   
+        (args) -> expr.instanceMethod(args)
+   [메서드 참조]
+        expr::instanceMethod
+~~~
+> **예제코드** 생성자참조:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode036.java">SourceCode036</a>
+
  ## 3.7 람다, 메서드 참조 활용하기
  
+> **예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode03.java">SourceCode037</a>
 
  ## 3.8 람다 표현식을 조합할수 있는 유용한 메서드 
 

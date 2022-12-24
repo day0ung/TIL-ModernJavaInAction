@@ -299,7 +299,7 @@ Apple a1 = c1.get();
 
  ## 3.7 람다, 메서드 참조 활용하기
  
-> **예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode03.java">SourceCode037</a>
+> **예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter03/SourceCode037.java">SourceCode037</a>
 
  ## 3.8 람다 표현식을 조합할수 있는 유용한 메서드 
 

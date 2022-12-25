@@ -78,11 +78,8 @@ Stream<T> skip(long n);
 ### 스트림 평면화
 * ***flatMap*** : 각 배열을 스트림이 아니라 스트림의 콘텐츠로 매핑한다. 스트림의 각 값을 다른 스트림으로 만든다음에 모든 스트림을 하나의 스트림으로 연결하는 기능을 수행한다. 
 > <a href= "https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter05/SourceCode053.java"> 예제코드 </a> : SourceCode053
-</br>
-</br>
-</br>
-![](./img/stream53.jpg)
 
+> ![](./img/stream53.png)
 
 </br>
 </br>

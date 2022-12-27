@@ -159,6 +159,14 @@ int sum_reduce = numbers.stream().reduce(1, (a,b) -> a * b);
 Optional<T> reduce(BinaryOperator<T> accumulator);
 ~~~
 
+### 최댓값과 최솟값
+reduce는 두개의 인수를 갖는다. 
+ * 초깃값
+ * 스트림의 두 요소를 합쳐서 하나의 값으로 만드는데 사용할 람다.
+ ~~~java
+Optional<T> max(Comparator<? super T> comparator);
+Optional<T> min(Comparator<? super T> comparator);
+ ~~~
 
 
  > **예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter05/SourceCode055.java">SourceCode055</a>
@@ -167,9 +175,15 @@ Optional<T> reduce(BinaryOperator<T> accumulator);
 </br>
 </br>
 
-## 5.6 숫자형 스트림
+ ### # reduce 메서드의 장점과 병렬화
+> reduce를 이용하면 내부 반복이 추솽화 되면서 내부 구현에서 병렬로 reduce를 실행한다. 반복적인 합계에서는 sum 변수를 공유해야 하므로 쉽게 병렬화하기 어렵다. 스트림은 내부적으로 포크/조인 프레임워크(fork/join framework)를 통해 이를 처리한다. 7장에서는 스트림의 모든 요소를 더하는 코드를 병렬로 만드는 방법도 설명한다. stream()을 parallelStream()으로 바꾸면된다.
+### # 스트림 연산 : 상태없음과 상태있음
+> 
+## 5.6 실전연습
+
+## 5.7 숫자형 스트림
 
 </br>
 </br>
 
-## 5.7 스트림 만들기
+## 5.8 스트림 만들기

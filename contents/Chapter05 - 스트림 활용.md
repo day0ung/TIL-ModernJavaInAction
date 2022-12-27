@@ -125,6 +125,44 @@ Optional<T> findAny();
 </br>
 
 ## 5.5 리듀싱
+***리듀싱연산***은 모든 스트림 요소를 처리해서 값으로 도출하는 것을 의미한다. 함수형 프로그래밍 용어로는 이 과정ㅇ이 마치 종이를 작은 조각이 될때 까지 반복해서 접는것과 비슷하다는 의미로 폴드라고 부른다.
+
+### 요소의 합
+for-each를 이용한, 리스트의 숫자더하기에서는 파라미터를 두개사용했다. reduce를 이용하면 애플리케이션의 반복된 패턴을 추상화 할수 있다.
+
+reduce는 두개의 인수를 갖는다. 
+* 초기값()
+* 두 요소를 조합해서 새로운 값을 만드는 BinaryOperator\<T>, 예제에서는 람다포현식 (a,b) -> a+b를 사용했다.
+~~~java
+T reduce(T identity, BinaryOperator<T> accumulator);
+~~~
+
+reduce로 다른람다를 넘겨주면 모든 요소에 곱셈을 적용할 수 있다.
+~~~java
+int sum_reduce = numbers.stream().reduce(1, (a,b) -> a * b);
+~~~
+~~~java
+/*reduce의 연산과정*/
+      [4]   [5]  [3]  [9]  ---- Stream<Integer>
+       ↓     |    |
+0  ->  +     ↓    |        ---- reduce(0, (a,b) -> a + b)
+       4  -> +    ↓ 
+             9 -> +
+                  12
+~~~
+람다의 첫번째 파라미터(a)에 0이 사용되었고 스트림에서 4를 소비해서 두번째 파라미터(b)로 사용했다. 0+4의 결과인 4가 새로운 누적값이 되었다. 이제 누적값으로 람다를 다시 호출하며 다음요소인 5를 소비한다. 
+
+### 초기값 없음
+초기값을 받지 않도록 오버로드된 reduce도 있다. 이 reduce는 Optional 객체를 반환한다.
+<code>Optional\<T></code>를 반환하는 이유는 아무요소도 없는 상황이 있다. reduce는 합계가 없음을 가리킬수 있도록 Optional객체로 감싼 결과를 반환하다.
+~~~java
+Optional<T> reduce(BinaryOperator<T> accumulator);
+~~~
+
+
+
+ > **예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter05/SourceCode055.java">SourceCode055</a>
+
 
 </br>
 </br>

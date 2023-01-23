@@ -175,15 +175,65 @@ Optional<T> min(Comparator<? super T> comparator);
 </br>
 </br>
 
- ### # reduce 메서드의 장점과 병렬화
+ ### ✍ reduce 메서드의 장점과 병렬화
 > reduce를 이용하면 내부 반복이 추솽화 되면서 내부 구현에서 병렬로 reduce를 실행한다. 반복적인 합계에서는 sum 변수를 공유해야 하므로 쉽게 병렬화하기 어렵다. 스트림은 내부적으로 포크/조인 프레임워크(fork/join framework)를 통해 이를 처리한다. 7장에서는 스트림의 모든 요소를 더하는 코드를 병렬로 만드는 방법도 설명한다. stream()을 parallelStream()으로 바꾸면된다.
-### # 스트림 연산 : 상태없음과 상태있음
-> 
+### ✍ 스트림 연산 : 상태없음과 상태있음
+> map,filter 등은 입력 스트림에서 각 요소를 결과를 출력스트림으로 보낸다. 따라서 이들은 보통 상태가 없는, 즉 내부상태를 갖지 않는 연산이다.  
+reduce,sum,max 같은 연산은 결과를 누적할 내부상태가 필요하다. 스트림에서 처리하나 요소 수와 관계없이 내부상태의크기는 한정<sup>bounded: 바운드</sup> 되어있다.  
+sorted,distinct 같은 연산은 요소를 정렬하거나 제거하려면 과거의 이력을 알고 있어야한다. 어떤 요소를 출력스트림으로 추가하려면 **모든 요소가 버퍼에 추가 되어있어야한다**. 연산을 수행하는 데이터가 무한이라면 문제가 생길 수 있다. 이러한 연산을 내부상태를 갖는 연산이라고 한다. 
 ## 5.6 실전연습
+**실전연습 코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter05/SourceCode056.java">SourceCode056</a>
 
 ## 5.7 숫자형 스트림
+스트림 API는 숫자 스트림을 효율적으로 처리할 수 있도록 기본형 특화 스트림(primitive stream specialization)을 제공한다.
 
+### 기본형 특화 스트림
+기본형 특화 스트림으로 IntStream, DoubleStream, LongStream이 존재하며 각각의 인터페이스에는 숫자 스트림의 합계를 계산하는 sum, 최댓값 요소를 검색하는 max 같이 자주 사용하는 숫자 관련 리듀싱 연산 메서드를 제공한다.
+
+### 숫자스트림으로 매핑
+스트림을 특화 스트림으로 변환할때는 mapToInt, mapToDuble, mapToLong 세가지 메서드를 가장많이 사용한다. 
+~~~java
+int calories = menu.stream()
+               .mapToInt(Dish::getCalories) <-IntStream반환
+               .sum();
+~~~
+mapToInt 메서드는 각 요리에서 모든 칼로리(Integer)를 추출한 뒤 InsTream을 반환한다.(Stream<Integer>가 아님) 스트림이 비어있으면 sum은 기본값0을 반환한다.
+
+### 객체 스트림으로 복원하기
+숫자 스트림을 만든 다음에, 원상태인 특화되지 않은 스트림으로 복원할수 있다. **boxed**메서드를 이용해서 특화스트림을 일반 스트림으로 변환할수 있다.
+~~~java
+IntStream intStream = menu.stream.mapToInt(Dish::getCalories) ;
+Stream<Integer> stream = intStream.boxed(); <-숫자스트림을 스트림으로 변환
+~~~
+### 기본값: optionalInt
+Optional도 기본형에 대하여 지원한다. OptionalInt, OptionalDouble, optionalLong 세 가지 기본형 특화 스트림 버전의 Optional이 제공된다.
+
+### 숫자 범위
+특정 범위의 숫자를 이용해야 할 때 range와 rangeClosed 메서드를 사용할 수 있다. 이는 IntStream, LongStream 두 기본형 특화 스트림에서 지원된다. range는 열린 구간을 의미하며, rangeClosed는 닫힌 구간을 의미한다.
 </br>
 </br>
 
 ## 5.8 스트림 만들기
+
+### (1) 값으로 스트림 만들기
+정적 메서드 Stream.of 을 이용하여 스트림을 만들 수 있다.
+
+### (2) null이 될 수 있는 객체로 스트림 만들기
+자바 9부터 지원되며 Stream.ofNullable 메서드를 이용하여 null이 될 수 있는 객체를 지원하는 스트림을 만들 수 있다.
+
+### (3) 배열로 스트림 만들기
+배열을 인수로 받는 정적 메서드 Arrays.stream 을 이용하여 스트림을 만들 수 있다.
+
+### (4) 파일로 스트림 만들기
+파일을 처리하는 등의 I/O 연산에 사용하는 자바의 NIO API(비블록 I/O)도 스트림 API를 활용할 수 있도록 업데이트되었다. java.nio.file.Files의 많은 정적 메서드가 스트림을 반환한다. 예를 들어 Files.lines는 주어진 파일의 행 스트림을 문자열로 반환한다.
+
+### (5) 함수로 무한 스트림 만들기
+Stream.iterate와 Stream.generate를 통해 함수를 이용하여 무한 스트림을 만들 수 있다. iterate와 generate에서 만든 스트림은 요청할 때마다 주어진 함수를 이용해서 값을 만든다. 따라서 무제한으로 값을 계산할 수 있지만, 보통 무한한 값을 출력하지 않도록 limit(n) 함수를 함께 연결해서 사용한다.
+> Stream.iterate
+~~~
+public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)
+~~~
+> Stream.generate
+~~~
+public static<T> Stream<T> generate(Supplier<T> s)
+~~~

@@ -3,6 +3,7 @@ package chapter05;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -53,7 +54,31 @@ public class SourceCode056 {
                 .distinct()
                 .sorted()
                 .reduce("", (n1,n2) -> n1+n2); //이름을 알파벳순으로 정렬
-        System.out.println(ex4);
+        System.out.println(ex4); //AlanBrianMarioRaoul
+
+        //5. Milan에 거래자가 있는가?
+        Boolean ex5 = transactions.stream()
+                .anyMatch(transaction -> transaction.getTrader().getCity().equals("Milan"));
+        System.out.println(ex5); //Milan
+
+        //6. 케임브리지에 거주하는 거래자의 모든 트랜잭션값 출력
+         transactions.stream()
+                .filter(t -> "Cambridge".equals(t.getTrader().getCity()))
+                .map(Transaction::getValue)
+                .forEach(System.out::println);
+
+        //7. 전체 트랜잭션중 최댓값은?
+        Optional<Integer> ex7 = transactions.stream()
+                .map(Transaction::getValue)
+                .reduce(Integer::max); //결과 스트림의 최대값 계산
+        System.out.println(ex7); //Optional[1000]
+
+        //8. 트랜잭션중 최소값
+        Optional<Transaction> ex8 = transactions.stream()
+                .reduce((t1, t2) ->  t1.getValue() < t2.getValue() ? t1 :t2); //각 트랜잭션값을 반복비교해서 가장작은 트랜잭션검색
+        System.out.println(ex8);
+
+
 
 
 

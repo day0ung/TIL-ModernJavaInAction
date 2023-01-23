@@ -22,13 +22,17 @@ public class SourceCode052 {
         });
         //위 List는 이미 칼로리 순으로 정렬되어있다. (filter연산을 이용하면 전체 스트림을 반복하면서 각 요소에 predicate를 적용한다)
 
-        /* takeWhile 사용
-        java 9 버전, 현재 java8이라 없음
+
+        //takeWhile 사용   java 9 버전
         List<Dish> sliceMenu1
                 = specialMenu.stream()
                 .takeWhile(dish -> dish.getCalories() < 320)
                 .collect(Collectors.toList());
 
-         */
+        sliceMenu1.forEach( d -> {
+            System.out.println(d.getCalories());
+        });
+
+
     }
 }

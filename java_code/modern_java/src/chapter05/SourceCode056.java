@@ -79,7 +79,21 @@ public class SourceCode056 {
         System.out.println(ex8);
 
 
-
+//        JSONObject obj = new JSONObject();
+//        obj.put("Modello", "test");
+//        String key1 = "Numero modello articolo";
+//        String key2 = "Nome modello";
+//        String key3 = "Modello";
+//        String key4 = "Riferimento produttore";
+//        String key5 = "Numero di parti";
+//
+//
+//
+//        List<String> list = Arrays.asList("Numero modello articolo", "Nome modello", "Modello",  "Riferimento produttore","Numero di parti");
+//
+//        Optional<String> value = list.stream().filter(key -> obj.containsKey(key)).findFirst();
+//        String mpc = value.orElse("");
+//        String mpc = mpcKeys.stream().filter(key -> obj.containsKey(key)).findFirst().orElse("");
 
 
     }

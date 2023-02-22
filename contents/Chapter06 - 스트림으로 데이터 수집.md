@@ -191,7 +191,74 @@ public static <T, K, D, A, M extends Map<K, D>> Collector<T, ?, M> groupingBy(
 
 분할은 분할 함수(partitioning function)라 불리는 Predicate를 분류 함수로 사용하는 특수한 그룹화 기능이다. 맵의 키 형식은 Boolean이며, 결과적으로 그룹화 맵은 참 아니면 거짓을 갖는 두 개의 그룹으로 분류된다.  
 분할의 장점은 참, 거짓 두 가지 요소의 스트림 리스트를 모두 유지한다는 것이 장점이다.  
+**Collectors.partitioningBy**를 사용하여 요소를 반환한다.
+~~~java
+public static <T> Collector<T, ?, Map<Boolean, List<T>>> partitioningBy(Predicate<? super T> predicate) 
 
+public static <T, D, A> Collector<T, ?, Map<Boolean, D>> partitioningBy(Predicate<? super T> predicate, Collector<? super T, A, D> downstream)
+~~~
 
+> **분할 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter06/SourceCode064.java">SourceCode064</a>
 ## 6.5 Collector 인터페이스
+Collector 인터페이스는 리듀싱 연산을 어떻게 구현할지 제공하는 메서드 집합으로 구성된다.  
+Collector 인터페이스를 직접 구현해서 더 효율적으로 문제를 해결하는 컬렉터를 만드는 방법을 살펴보자.
+~~~java
+public interface Collector<T, A, R> {
+    Supplier<A> supplier();
+    BiConsumer<A, T> accumulator();
+    Function<A, R> finisher();
+    BinaryOperator<A> combiner();
+    Set<Characteristics> characteristics();
+}
+~~~
+
+* T는 수집될 항목의 제네릭 형식이다.
+* A는 누적자, 즉 수집 과정에서 중간 결과를 누적하는 객체의 형식이다.
+* R은 수집 연산 결과 객체의 형식이다.
+* supplier, accumulator, finisher, combiner 메서드는 collect메서드에서 실행하는 함수를 반환하는 반면,  
+  characteristics는 collect메서드가 어떤 최적화(병렬화 같은)를 이용해서 리듀싱 연산을 수행할 것인지 결정하도록 돕는 힌트 특성 집합을 제공한다
+
+
+예를 들어 Stream의 모든 요소를 List로 수집하는 ToListCollector라는 클래스는 아래와 같이 만들 수 있다.
+~~~java
+public class ToListCollector<T> implements Collector<T, List<T>, List<T>>
+~~~
+
+
+### supplier() : 새로운 결과 컨테이너 만들기
+supplier 메서드는 수집 과정에서 빈 누적자 인스턴스를 만드는 파라미터가 없는 함수이다.
+
+### accumulator() :  결과 컨테이너에 요소 추가하기
+accumulator 메서드는 리듀싱 연산을 수행하는 함수를 반환한다. 즉 누적자(스트림의 첫 n-1개 항목을 수집한 상태)와 n번째 요소를 함수에 적용한다 (그렇기에 제네릭 형식도 <A, T>이다).
+
+### finisher() :  최종 변환값을 결과 컨테이너로 적용하기
+finisher 메서드는 스트림 탐색을 끝내고 누적자 객체를 최종 결과로 반환하면서 누적 과정을 끝낼 때 호출할 함수를 반환해야한다. ToListCollector와 같이 누적자 객체가 이미 최종 결과인 상황도 있다. 이럴경우 finisher함수는 항등 함수를 반환한다.
+
+>💡순차 리듀싱 과정의 논리적 순서
+> ![chapter06](./img/chapter067.png)
+
+### combiner() : 두 결과 컨테이너 병합 
+combiner는 스트림의 서로 다른 서브파트를 병렬로 처리할 때 누적자가 이 결과를 어떻게 처리할지 정의한다 (그렇기에 BinaryOperator이다).
+
+>💡병렬화 리듀싱 과정에서 combiner 메서드 활용
+> ![chapter06](./img/chapter068.png)
+> 1. 스트림을 여러 서브 파트로 분할 한다.
+> 2. 분할된 서브 파트로 대하여 순차 리듀싱 과정의 변환과정을 처리한다.
+> 3. 완료된 서브 파트에 대하여 combiner를 통해 결과 컨테이너를 병합한다.
+> 4. combiner를 통해 완성된 최종 컨테이너를 finisher를 통해 결과 컨테이너로 적용한다.
+
+### characteristics() : 컬렉터의 연산을 정의하는 characteristics형식의 불변집합 반환
+~~~java
+enum Characteristics {
+    CONCURRENT,
+    UNORDERED,
+    IDENTITY_FINISH
+}
+~~~
+
+* UNORDERED : 리듀싱 결과는 스트림 요소의 방문 순서나 누적 순서에 영향을 받지 않는다.
+* CONCURRENT : 다중 스레드에서 accumulator 함수를 동시에 호출할 수 있으며 병렬 리듀싱을 수행할 수 있다. 컬렉터의 플래그에 UNORDERED를 함께 설정하지 않았다면 데이터 소스가 정렬되어 있지 않은 상황에서만 병렬 리듀싱을 수행할 수 있다.
+* IDENTITY_FINISH : finisher 메서드가 반환하는 함수는 단순히 identity를 적용할 뿐이므로 이를 생략할 수 있다. 따라서 리듀싱 과정의 최종 결과로 누적자 객체를 바로 사용할 수 있다. 또한 누적자 A를 결과 R로 안전하게 형변환할 수 있다.
+
 ## 6.6 커스텀 컬렉터를 구현해서 성능 개선하기
+> ** 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter06/SourceCode066.java">SourceCode066</a>

@@ -297,4 +297,4 @@ public class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
 ~~~
 
 ## 6.6 커스텀 컬렉터를 구현해서 성능 개선하기
-> ** 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter06/SourceCode066.java">SourceCode066</a>
+> **예제코드** :  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter06/SourceCode066.java">SourceCode066</a>

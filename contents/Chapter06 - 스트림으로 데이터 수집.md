@@ -260,5 +260,41 @@ enum Characteristics {
 * CONCURRENT : 다중 스레드에서 accumulator 함수를 동시에 호출할 수 있으며 병렬 리듀싱을 수행할 수 있다. 컬렉터의 플래그에 UNORDERED를 함께 설정하지 않았다면 데이터 소스가 정렬되어 있지 않은 상황에서만 병렬 리듀싱을 수행할 수 있다.
 * IDENTITY_FINISH : finisher 메서드가 반환하는 함수는 단순히 identity를 적용할 뿐이므로 이를 생략할 수 있다. 따라서 리듀싱 과정의 최종 결과로 누적자 객체를 바로 사용할 수 있다. 또한 누적자 A를 결과 R로 안전하게 형변환할 수 있다.
 
+**ToListCollector 구현**
+~~~java
+public class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
+	
+	@Override
+	public Supplier<List<T>> supplier() {
+		return ArrayList::new;
+	}
+
+	@Override
+	public BiConsumer<List<T>, T> accumulator() {
+		return List::add;
+	}
+
+	@Override
+	public BinaryOperator<List<T>> combiner() {
+		return (list1, list2) -> {
+				list1.addAll(list2);
+				return list1;			
+		};
+	}
+	
+	@Override
+	public Function<List<T>, List<T>> finisher() {
+		return Function.identity();
+	}
+	
+	@Override
+	public Set<Characteristics> characteristics() {
+		return Collections.unmodifiableSet(EnumSet.of(
+				IDENTITY_FINISH, CONCURRENT));
+	}
+}
+
+~~~
+
 ## 6.6 커스텀 컬렉터를 구현해서 성능 개선하기
 > ** 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter06/SourceCode066.java">SourceCode066</a>

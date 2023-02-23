@@ -26,3 +26,7 @@ Chapter05 - 스트림 활용
 <a href = "https://github.com/day0ung/ModernJavaInAction/blob/main/contents/Chapter06%20-%20%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%9C%BC%EB%A1%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%88%98%EC%A7%91.md">
 Chapter06 - 스트림으로 데이터 수집
 </a>
+</br>
+<a href = "https://github.com/day0ung/ModernJavaInAction/blob/main/contents/Chapter07%20-%20%EB%B3%91%EB%A0%AC%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EC%84%B1%EB%8A%A5.md">
+Chapter07 - 병렬데이터 처리와 성능
+</a>

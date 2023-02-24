@@ -24,18 +24,18 @@
   * ~~~java
       //스트림 사용
       public long sequentialSum() {
-      return Stream.iterate(1L, i -> i + 1)
-      .limit(N)
-      .reduce(0L, Long::sum);
+        return Stream.iterate(1L, i -> i + 1)
+        .limit(N)
+        .reduce(0L, Long::sum);
       }
   
       // 전통적인 for-loop
       public long iterativeSum() {
-      long result = 0;
-      for(long i = 1L; i<N; i++) {
-      result += i;
-      }
-      return result;
+        long result = 0;
+        for(long i = 1L; i<N; i++) {
+          result += i;
+        }
+        return result;
       }
     ~~~
 * 위의 연산은 N이 커진다면 부하가 커질 것이므로 병렬로 처리하는 것이 좋다. 이제 병렬 스트림을 사용해보자
@@ -56,6 +56,67 @@ ForkJoinPool은 프로세서 수, 즉 Runtime.getRuntime().availableProcessors()
 > ~~~
 
 ### 스트림 성능 측정
+병렬화를 이용하면 순차나 반복 형식에 비해 성능이 더 좋아질 것이라 추측했다. 하지만 가장 좋은 방법은 직접 측정하는 것이다. 자바 마이크로벤치마크 하니스(Java Microbenchmark Harness) JHM 라이브러리를 이용해 벤치마크를 구현해본다. 
 
+JMH를 이용하면 간단하고, 어노테이션 기반 방식을 지원하며, 안정적으로 자바 프로그램이나 자바 가상 머신(JVM)을 대상으로 하는 다른 언어용 벤치마크를 구현할 수 있다.
+
+***Maven 설정***
+~~~java
+<dependency>
+	<groupId>org.openjdk.jmh</groupId>
+	<artifactId>jmh-core</artifactId>
+	<version>1.17.4</version>
+</dependency>
+<dependency>
+	<groupId>org.openjdk.jmh</groupId>
+	<artifactId>jmh-generator-annprocess</artifactId>
+	<version>1.17.4</version>
+</dependency>
+
+<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-shade-plugin</artifactId>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals><goal>shade</goal></goals>
+					<configuration>
+						<finalName>benchmarks</finalName>
+						<transformers>
+							<transformer implementation=
+									"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<mainClass>org.openjdk.jmh.Main</mainClass>
+							</transformer>
+						</transformers>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+</build>
+~~~
+***n개의 숫자를 더하는 함수의 성능 측정***
+~~~java
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Fork(value = 2, jvmArgs = {"-Xms4G", "-Xmx4G"})
+@State(Scope.Benchmark)
+public class MyBenchmark {
+    private static final long N = 10_000_000L;
+
+    @Benchmark  // 벤치마크 대상 메서드
+    public long benchmark() {
+			// n개의 숫자를 더하는 로직 구현
+    }
+
+    @TearDown(Level.Invocation) // 매 번 벤치마크를 실행한 다음에는 가비지 컬렉터 동작 시도
+    public void tearDown() {
+        System.gc();
+    }
+}
+~~~
+* 
 ## 7.2 포크/조인 프레임워크
 ## 7.3 Spliterator 인터페이스

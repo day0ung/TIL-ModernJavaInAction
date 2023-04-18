@@ -1,4 +1,4 @@
-package src.chapter07;
+package chapter07;
 
 import java.util.concurrent.RecursiveTask;
 

@@ -1,4 +1,4 @@
-package src.chapter07;
+package chapter07;
 
 import java.util.Calendar;
 import java.util.Spliterator;
@@ -26,7 +26,7 @@ public class SourceCode074 {
         // 해결방법은 SourceCode075에서..
 
         ////WordCounter 병렬로 수행하기 정답!
-        Spliterator<Character> spliterator = new SourceCode075(SENTENCE);
+        Spliterator<Character> spliterator = new src.chapter07.SourceCode075(SENTENCE);
         Stream<Character> stream1 = StreamSupport.stream(spliterator, true);
         System.out.println("Found spliterator " + WordCounter.countWords(stream1));
     }

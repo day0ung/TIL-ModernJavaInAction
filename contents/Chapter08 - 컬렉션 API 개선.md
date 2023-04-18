@@ -99,5 +99,19 @@ default boolean remove(Object key, Object value)
 ### 합침
 두 개의 맵을 합칠 때 putAll 메서드를 사용했는데, 이때 중복된 키가 있다면 원하는 동작이 이루어지지 못할 수 있다. 새로 제공되는 merge 메서드는 중복된 키에 대한 동작(BiFunction)을 정의해줄 수있다.
 
-> > 📌 **계산, 삭제, 교체 패턴 및 합침 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter08/SourceCode083.java">SourceCode083</a>
+>  📌 **계산, 삭제, 교체 패턴 및 합침 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter08/SourceCode083.java">SourceCode083</a>
+
 ## 개선된 ConcurrentHashMap 
+ConcurrentHashMap 클래스는 동시성 친화적이며 최신 기술을 반영한 HashMap 버전이다. 
+
+***리듀스와 검색***
+* forEach : 각 (키, 값) 쌍에 주어진 액션을 수행
+* reduce : 모든 (키, 값) 쌍을 제공된 리듀스 함수를 이용해 결과로 합침
+* search : 널이 아닌 값을 반환할 때까지 각 (키, 값) 쌍에 함수를 적용
+또한 연산에 병렬성 기준값(threshold)를 정해야 한다. 맵의 크기가 기준값보다 작으면 순차적으로 연산을 진행한다. 기준값을 1로 지정하면 공통 스레드 풀을 이용해 병렬성을 극대화할 수 있다.
+
+***계수***  
+맵의 매핑 개수를 반환하는 mappingCount 메서드를 제공한다. 기존에 제공되던 size 함수는 int형으로 반환하지만 long 형으로 반환하는 mappingCount를 사용할 때 매핑의 개수가 int의 범위를 넘어서는 상황에 대하여 대처할 수 있을 것이다.
+
+***집합뷰***  
+ConcurrentHashMap을 집합 뷰로 반환하는 keySet 메서드를 제공한다. 맵을 바꾸면 집합도 바뀌고 반대로 집합을 바꾸면 맵도 영향을 받는다. newKeySet이라는 메서드를 통해 ConcurrentHashMap으로 유지되는 집합을 만들 수도 있다.

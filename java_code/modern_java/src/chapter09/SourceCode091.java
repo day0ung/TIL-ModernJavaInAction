@@ -1,5 +1,12 @@
 package chapter09;
 
+import chapter04.Dish;
+
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
+
 public class SourceCode091 {
     public static void main(String[] args) {
         //** 익명 클래스를 람다 표현식으로 리팩터링 **
@@ -17,8 +24,12 @@ public class SourceCode091 {
         doSomething((Task)() -> System.out.println("lambda"));
 
         //** 람다 표현식을 메서드 참조로 리팩터링 **
+        refactorLambdaToMethod();
+
+        //** 명령형 데이터 처리를 스트림으로 리팩터링
 
     }
+
 
     private static void refactorClassToLambda() {
         Runnable r1 = new Runnable() {
@@ -49,7 +60,6 @@ public class SourceCode091 {
     }
 
 
-
     interface Task{
         public void execute();
     }
@@ -57,7 +67,24 @@ public class SourceCode091 {
     public static void doSomething(Runnable r){r.run();}
     public static void doSomething(Task a){ a.execute();}
 
+    private static void refactorLambdaToMethod() {
+        List<Dish> menu = Dish.getMenu();
 
+        // 기존 chapter6에서 칼로리 수준으로 요리를 그룹화 하는 코드
+        Map<Dish.CaloricLevel, List<Dish>> dishesByCaloricLevel =
+                menu.stream()
+                        .collect(
+                                groupingBy(dish -> {
+                                    if(dish.getCalories() <= 400) return Dish.CaloricLevel.DIET;
+                                    else if (dish.getCalories() <= 700) return Dish.CaloricLevel.NORMAL;
+                                    else return Dish.CaloricLevel.FAT;
+                                })
+                        );
 
+        //람다 표현식을 별도의 메서드로 추출 (if, else if, else) 부분을 Dish 클래스에 메서드 추가   getCaloricLevel()
+
+        Map<Dish.CaloricLevel, List<Dish>> dishesByCaloricLevelRefactor =
+                menu.stream().collect(groupingBy(Dish::getCaloricLevel));
+    }
 
 }

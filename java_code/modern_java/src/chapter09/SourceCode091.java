@@ -2,8 +2,10 @@ package chapter09;
 
 import chapter04.Dish;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -27,8 +29,11 @@ public class SourceCode091 {
         refactorLambdaToMethod();
 
         //** 명령형 데이터 처리를 스트림으로 리팩터링
+        refactorDataToStream();
 
     }
+
+
 
 
     private static void refactorClassToLambda() {
@@ -85,6 +90,23 @@ public class SourceCode091 {
 
         Map<Dish.CaloricLevel, List<Dish>> dishesByCaloricLevelRefactor =
                 menu.stream().collect(groupingBy(Dish::getCaloricLevel));
+    }
+
+    private static void refactorDataToStream() {
+        List<Dish> menu = Dish.getMenu();
+        List<String> dishNames = new ArrayList<>();
+        //필터링,추출로 엉킨 코드
+        for (Dish dish : menu){
+            if(dish.getCalories() >300){
+                dishNames.add(dish.getName());
+            }
+        }
+
+        //스트림 API활용
+        menu.parallelStream()
+                .filter(d -> d.getCalories() >300)
+                .map(Dish::getName)
+                .collect(Collectors.toList());
     }
 
 }

@@ -169,6 +169,7 @@ Stream 인터페이스를 데이터 리스트를 조작하는 DSL 로 간주할 
 > 3. 고객이 요청한 한개 이상의 거래의 주문, (Order.class)  
 >
 > **자바로 DSL을 만드는 패턴과 기법 예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter10/SourceCode103_DSL.java">SourceCode103_DSL</a>
+> **Builder를 정의한 DSL package** : <a href= "https://github.com/day0ung/ModernJavaInAction/tree/main/java_code/modern_java/src/chapter10/dsl">DSL </a>
 
 ## 실생활의 자바8 DSL
 DSL을 개발하는데 사용하는 유용한 패턴에 대해 알아봤으니

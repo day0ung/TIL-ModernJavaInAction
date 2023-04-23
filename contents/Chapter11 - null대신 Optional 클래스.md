@@ -91,7 +91,7 @@ Optional<String> name = optionalInsurance.map(Insurance::getName);
 ### flatMap으로 Optional객체 연결
 위에서 살펴본 예제를 통해 map 메서드로 반환되는 값은 Optional로 감싸짐을 확인할 수 있었다.  
 그렇다면 반환하는 객체가 이미 Optional 객체일 경우 반환되는 타입이 Optional<Optional>이다. 이때 두번 감싸진 Optional로 받고 싶지 않다면 flatMap 메서드를 사용하자. Optional의 flatMap 메서드는 전달된 Optional 객체의 요소에 대해 새로운 Optional로 반환해준다.
-> **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/srcchapter/11/SourceCode113.java">SourceCode113.getCarInsuranceNameUseFlatMap()</a>
+> **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter11/SourceCode113.java">SourceCode113.getCarInsuranceNameUseFlatMap()</a>
 
 > 💡**도메인 모델에 Optional을 사용했을 때 데이터를 직렬화할 수 없는 이유** 
 > Optional 클래스는 필드 형식으로 사용할 것을 가정하지 않았으므로 Serializable 인터페이스를 구현하지 않았다.  

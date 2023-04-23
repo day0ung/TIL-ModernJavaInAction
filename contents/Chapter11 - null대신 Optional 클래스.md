@@ -1,6 +1,6 @@
 # null대신 Optional 클래스
 
-## 값이 없는 상황을 어떻게 처리할까?
+## 11.1 값이 없는 상황을 어떻게 처리할까?
 #### 보수적인 자세로 NullPointerException 줄이기
 필요한 곳에 다양한 null 확인 코드를 추가해서 NullPointerException문제를 해결한다. 변수에 접근할 때마다 중첩된 if가 추가되면서 코드 들여쓰기 수준이 증가한다. 이와 같은 반복 패턴(recurring pattern) 코드를 **깊은 의심(deep doubt)** 이라 부른다.  
 다른 방법으로 중첩 if 블록을 없애고 둘 이상의 출구를 두는 방식이 있다. 하지만 이와 같은 경우 출구 때문에 유지보수가 어려워질 수 있다.
@@ -50,7 +50,7 @@ public String getCarInsuranceName(Person person){
 > Groovy에서는 안전 내비게이션 연산자(safe navigation operator) ?.를 도입해서 null문제를 해결했다.  
 >  > <code> def carInsuranceName = person?.car?.insurance?.name </code>
 
-## Optional 클래스 소개
+## 11.2 Optional 클래스 소개
 * Java 8은 하스켈과 스칼라의 영향을 받아 java.util.Optional이라는 클래스를 도입했다.
 * Optional은 선택형 값을 캡슐화 하는 클래스이며 값이 있으면 Optional 클래스는 값을 감싸고 값이 없으면 Optional.empty 메서드로 Optional 객체를 반환한다.
 * 반면 값이 없으면 Optional.empty 메서드로 Optional을 반환한다. Optional.empty는 Optional의 특별한 싱글턴 인스턴스를 반환하는 정적 팩토리 메서드이다.
@@ -59,7 +59,7 @@ public String getCarInsuranceName(Person person){
 
 Optional 클래스를 사용하면 모델의 의미(semantic)가 더 명확해진다. 변수가 Optional일 경우 그 값을 가질 수도 있으며 가지지 않을 수도 있다는 것을 의미한다. Optional의 역할은 더 이해하기 쉬운 API를 설계하도록 돕는 것이다. 즉, 메서드의 시그니처만 보고도 선택형값인지 여부를 구별할 수 있다. Optional이 등장하면 이를 unwrap해서 값이 없을 수 있는 상황에 적절하게 대응하도록 강제하는 효과가 있다.
 
-## Optional 적용 패턴
+## 11.3 Optional 적용 패턴
 ###  Optional 객체 만들기
 * 빈 Optional
     * <code>Optional<Car> optCar = Optional.empty()</code>
@@ -176,7 +176,7 @@ if (insurance != null && "XXX".equals(insurance.getName())) {
 > 💡Optional 클래스의 메서드
 > ![](./img/optional.jpeg)
 
-## Optional을 사용한 실용 예제
+## 11.4 Optional을 사용한 실용 예제
 잠재적으로 null이 될 수 있는 대상을 Optional로 감싸기
 * 기존 자바 API에서는 null을 반환하며 요청한 값이 없거나 계산이 실패했음을 알렸다.
 * map.get("key") 는 키에 해당하는 값이 map에 없으면 null을 반환하게 되었다.

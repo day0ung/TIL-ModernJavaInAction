@@ -1,11 +1,11 @@
 # 람다를 이용한 도메인 전용 언어
-* [도메인 전용 언어 , DSL](#도메인-전용-언어--dsl--domain-specific-language-)
-* [최신 자바 API의 작은 DSL](#최신-자바-api의-작은-dsl)
-* [자바로 DSL을 만드는 패턴과 기법](#자바로-dsl을-만드는-패턴과-기법)
-* [실생활의 자바8 DSL](#실생활의-자바8-dsl)
+* [도메인 전용 언어 , DSL](#101-도메인-전용-언어--dsl--domain-specific-language-)
+* [최신 자바 API의 작은 DSL](#102-최신-자바-api의-작은-dsl)
+* [자바로 DSL을 만드는 패턴과 기법](#103-자바로-dsl을-만드는-패턴과-기법)
+* [실생활의 자바8 DSL](#104-실생활의-자바8-dsl)
 
 
-## 도메인 전용 언어 , DSL(domain-specific language)
+## 10.1 도메인 전용 언어 , DSL(domain-specific language)
 * 특정 비즈니스 도메인의 문제를 해결하려고 만든 언어
 <sup>Maven의 경우 빌드 과정을 표현하는 DSL로 간주 할수 있다. </sup> 
 * 특정 비스니스 도메인을 인터페이스로 만든 API
@@ -75,7 +75,7 @@ DSL을 개발할때는 아래 두가지 필요성을 생각해야한다.
 * 자신만의 문법과 구문으로 새로운 언어를 설계해야 한다.
 * 외부 DSL을 개발하는 가장 큰 장점은 외부 DSL이 제공하는 무한한 유연성 때문이다.
 
-## 최신 자바 API의 작은 DSL
+## 10.2 최신 자바 API의 작은 DSL
 자바의 새로운 기능의 장점을 적용한 첫 API는 네이티브 자바 API 자신이다.  
 사람들을 가지고 있는 리스트에서 나이순으로 객체를 정렬하는 예제를 보자.
 ~~~java
@@ -116,7 +116,7 @@ Stream 인터페이스를 데이터 리스트를 조작하는 DSL 로 간주할 
 > 유연한 방식으로 여러 그룹화 작업을 만든다.   
 > **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter10/SourceCode102_2.java">SourceCode102_2</a>
 
-## 자바로 DSL을 만드는 패턴과 기법
+## 10.3 자바로 DSL을 만드는 패턴과 기법
 ### 메서드 체인
 메서드 체인은 DSL 에서 가장 흔한 방식 중 하나이다.
 * 장점
@@ -171,7 +171,7 @@ Stream 인터페이스를 데이터 리스트를 조작하는 DSL 로 간주할 
 > **자바로 DSL을 만드는 패턴과 기법 예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter10/SourceCode103_DSL.java">SourceCode103_DSL</a>  
 > **Builder를 정의한 DSL package** : <a href= "https://github.com/day0ung/ModernJavaInAction/tree/main/java_code/modern_java/src/chapter10/dsl">DSL </a>
 
-## 실생활의 자바8 DSL
+## 10.4 실생활의 자바8 DSL
 DSL을 개발하는데 사용하는 유용한 패턴에 대해 알아봤으니
 이 패턴들이 얼마나 사용되고 있는지 살펴본다.
 * jOOQ : jOOQ는 SQL을 구현하는 내부적 DSL로 자바에 직접 내장된 형식 안전 언어다.

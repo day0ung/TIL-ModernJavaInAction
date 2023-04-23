@@ -1,11 +1,11 @@
 # 컬렉션 API 개선
 
-* [컬렉션 팩토리](#컬렉션-팩토리)
-* [리스트와 집합 처리](#리스트와-집합-처리)
-* [맵 처리](#맵-처리)
-* [개선된 ConcurrentHashMap](#개선된-concurrenthashmap)
+* [컬렉션 팩토리](#81-컬렉션-팩토리)
+* [리스트와 집합 처리](#82-리스트와-집합-처리)
+* [맵 처리](#83-맵-처리)
+* [개선된 ConcurrentHashMap](#84-개선된-concurrenthashmap)
 
-## 컬렉션 팩토리
+## 8.1 컬렉션 팩토리
 자바 9에서는 작은 컬렉션 객체를 쉽게 만들수 있는 몇 가지 방법을 제공한다.  
 <code>Arrays.asList("a", "b", "c")</code>는 고정 크기의 리스트를 만들어 요소를 갱신할수 있지만,  
 새 요소를 추가하거나 요소를 삭제할 순 없다. 추가하려면 Unsupported OperationException이 발생한다.
@@ -31,13 +31,13 @@ Set<String> friends = Stream.of("e1","e2","e3").collect(toSet());
 * Map.of : 키와 값을 번갈아 제공하는 방법으로 맵을 만들 수 있다.
 * Map.ofEntries : Map.Entry<K, V> 객체를 인수로 받아 맵을 만들 수 있다. 엔트리 생성은 Map.entry 팩터리 메서드를 이용해서 전달하자
 
-## 리스트와 집합 처리
+## 8.2 리스트와 집합 처리
 자바 8에서는 List, Set 인터페이스에 다음과 같은 메서드를 추가했다.
 * removeIf : 프레디케이트를 만족하는 요소를 제거한다. List나 Set을 구현하거나 그 구현을 상속받은 모든 클래스에서 이용
 * replaceAll : 리스트에서 이용할 수 있는 기능으로 UnaryOperator함수를 이용해 요소를 바꾼다.
 * sort : List 인터페이스에서 제공하는 기능으로 리스트를 정렬한다. 
 
-## 맵 처리
+## 8.3 맵 처리
 자바 8에서는 Map 인터페이스에 몇가지 디폴트 메서드를 추가했다.
 ### forEach 메서드 
 맵에서 키와 값을 반복할 수 있으며, BiConsumer를 인수를 받는 메서드를 지원한다
@@ -101,7 +101,7 @@ default boolean remove(Object key, Object value)
 
 >  📌 **계산, 삭제, 교체 패턴 및 합침 예제코드**:  <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter08/SourceCode083.java">SourceCode083</a>
 
-## 개선된 ConcurrentHashMap 
+## 8.4 개선된 ConcurrentHashMap 
 ConcurrentHashMap 클래스는 동시성 친화적이며 최신 기술을 반영한 HashMap 버전이다. 
 
 ***리듀스와 검색***

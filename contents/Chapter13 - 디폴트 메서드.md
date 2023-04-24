@@ -124,7 +124,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAecc
 ### 디폴트 메서드를 제공하는 서브인터페이스가 이긴다. 
 * 디폴트 메서드를 제공하는 가장 하위의 서브인터페이스가 이긴다.(13.5)
   * ![](./img/subinterface.png)
-  * 터페이스 A, B가 존재하며 클래스 C가 B와 A를 구현한다고 할때 C에서 호출하는 hello는 2번 규칙에 따라 B의 hello가 실행된다.
+  * 인터페이스 A, B가 존재하며 클래스 C가 B와 A를 구현한다고 할때 C에서 호출하는 hello는 2번 규칙에 따라 B의 hello가 실행된다.
 * 하나의 클래스를 상속받아 두개의 인터페이스를 구현(13.6)
   * ![](./img/twointerface.png)
   * ~~~java

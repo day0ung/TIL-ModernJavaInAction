@@ -6,8 +6,8 @@
    마이크로서비스 아키텍처 선택이 증가하게되며 독립적으로만 동작하는 웹사이트가 아닌 다양한 소스의 콘텐츠를 가져와 합치는 메시업 형태를 띄게된다. 이를 위해 여러 웹 서비스에 접근해야 하는 동시에 서비스의 응답을 기다리는 동안 연산이 블록되거나 귀중한 CPU 클록 사이클 자원을 낭비하지 않아야 한다. 특히 스레드를 블록함으로 연산 자원을 낭비하는 일은 피해야 한다.
 
 이를 위해 자바 8에서는 Future인터페이스를 구현한 CompletableFuture 클래스를 제공하며, 자바 9에서는 발행 구독 프로코톨에 기반한 리액티브 프로그래밍 개념을 따르는 플로 API를 제공한다.
-> 💡**동시성(Concurrency) vs 병렬성(Parallelism)**
-> ![](./img/concurrencyVsPara.png)
+> 💡**동시성(Concurrency) vs 병렬성(Parallelism)**  
+> ![](./img/concurrencyVsPara.png)   
 >  동시성은 단일 코어 머신에서 발생할 수 있는 프로그래밍 속성으로 실행히 서로 겹칠 수 있는 반면,  
 > 병렬성은 병렬 실행을 하드웨어 수준에서 지원한다. 
 
@@ -85,8 +85,8 @@ void f (int x, IntConsumer dealWithResult);
 ```
 <sup>f가 값일 반환하지 않는데 어떻게 동작할까? f에 추가 인수로 콜백(람다)를 전달해 바디에 return 하는게 아니라  
 결과가 준비되면 이를 람다로 호출하는 테스크 만드는 것이 비결이다.</sup>
-> > **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter15/SourceCode152.java">SourceCode152</a>
-위 예제 reactiveAPIExample()메서드 에서, 기용한 계산은 합계를 정확하게 알 수 없다. 어떤 함수가 먼저 계산될지 알수 없기 때문이다.
+> > **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter15/SourceCode152.java">SourceCode152</a>  
+> 위 예제 reactiveAPIExample()메서드 에서, 기용한 계산은 합계를 정확하게 알 수 없다. 어떤 함수가 먼저 계산될지 알수 없기 때문이다.
 
 예제코드 문제를 보완하기 위해  
 * if-then-else조건문을 이용해 적절하게 락을 걸어 두 콜백이 모두 호출되었는지 판단한다.
@@ -179,4 +179,68 @@ Future와 CompletableFuture는 독립적 실행과 병렬성이라는 정식적 
 
 반면 리액티브 프로그래밍은 시간이 흐르면서 여러 Future같은 객체를 통해 여러 결과를 제공한다. 
 ex) 온도계 객체는, 매초 마다 온도 값을 반복적으로 제공한다. 또다른 예로 리스너 객체는 네트워크에 HTTP요청이 발생하길 기다렸다가 이후에 결과 데이터를 생산한다.  
-그리고 다른 코드에서 온도값 또는 네트워크 결과를 처리한다. 
+그리고 다른 코드에서 온도값 또는 네트워크 결과를 처리한다.   
+* 두 예시(온도계, 리스너)는 Future같은 동작이 사용되었다. 한번의 결과가 아니라 여러번의 결과가 필요하다
+* 온도계 예시는 한번의 결과가 아니라 여러번의 결과가 필요하며, 가장 최근의 온도가 필요하다
+* 이런 종류의 프로그래밍을 리액티브라 부른다. 
+* 왜냐하면 낮은 온도를 감지 했을때 이에 **반응(react)** 하는 부분이 존재하기 때문이다
+
+자바 9에서 java.util.concurrent.Flow의 인터페이스에 발행-구독 모델(pub-sub)을 적용해 리액티브 프로그래밍을 제공한다.  
+자바 9 플로API는 간단히 세가지 플로 API로 정리할수 있다.  
+* **구독자** 가 구독할 수 있는 **발행자**
+* 이연결을 **구독**(subscription)이라 한다. 
+* 이연결을 이용해 메시지(또는 이벤트)를 전송한다.
+* (그림설명 발행자-구독자 모델)
+  * ![](./img/pubsub.png)
+
+#### 두 플로를 합치는 예제
+두 정보 소스로 부터 발행하는 이벤트를 합쳐서 다른 구독자가 볼수 있도록 발행하는 예제,
+<sup>이 기능은 수식을 포함하는 스프레드 시트의 셀헤서 흔히 제공하는 동작이다 </sup>  
+"=C1 +C2"라는 공식을 포함하는 스프레드 시트 셀 C3을 만들자, C1이나 C2의 값이 갱신되면 C3에도 새로운 값이 반영된다.  
+
+> **예제코드** : <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter15/SourceCode155.java">SourceCode155</a>
+> >💡업스트림과 다운스트림  
+> > 데이터가 발행자(생산자)에서 구독자(소비자)로 흐름을 착안해 개발자는 이를 업스트립 또는 다운스트림이라 부른다.  
+> > 위예제에서 데이터 newValue는 업스트림 onNext()메서드로 전달되고 notifyAllSubscribers()호출을 통해 다운스트림 onNext()로 호출된다. 
+
+#### 역압력 
+매 초마다 수천개의 메시지가 onNext로 전달된다면 빠르게 전달되는 이벤트를 아무 문제 없이 처리할 수 있을까? 이러한 상황을 압력(pressure)이라 부른다.
+
+이럴때는 정보의 흐름 속도를 제어하는 역압력 기법이 필요하다. 이것은 데이터 소비자가 느리게 처리되거나 처리할 수 없을 때 데이터 생산자가 생성하는 데이터 양을 제한하는 것을 의미  
+역압력은 Subscriber가 Publisher로 정보를 요청할 때만 전달할수 있도록 한다.
+* 자바 9 플로 API에서는 발행자가 무한의 속도고 아이템을 방출하는 대신 요청했을 때만 다음 아이템을 보내도록 하는 request() 메서드를 제공한다.
+
+Publisher와 Subscriber 사이에 채널이 연결되면 첫 이벤트로 Subscriber.onSubscribe(Subscription subscription)메서드가 호출된다.  
+Subscription 객체는 다음처럼 Subscriber와 Publisher와 통신할 수 있는 메서드를 포함한다.
+```java
+interface subscription {
+  void cancle ();
+  void request (long n);
+}
+```
+****실제 역압력의 간단한 형태****  
+한 번에 한 개의 이벤트를 처리하도록 발행-구독 연결을 구성하기 위해 다음과 같은 작업이 필요하다
+
+* Subscriber가 OnSubscribe로 전달된 Subscription 객체를 필드로 저장.
+* Subscriber가 수많은 이벤트를 받지 않도록 onSubscribe, onNext, onError의 마지막 동작에 channel.request(1)을 추가해 오직 한 이벤트만 요청한다.
+* 요청을 보낸 채널에만 onNext, onError 이벤트를 보내도록 Publisher의 notifyAllSubscribers 코드를 바꾼다.
+* 보통 여러 Subscriber가 자신만의 속도를 유지할 수 있도록 Publisher는 새 Subscription을 만들어 각 Subscriber와 연결한다.
+
+* 역압력을 구현하려만 여러가지 장단점을 생각해야 한다.
+  * 여러 Subscriber가 있을 때 이벤트를 가장 느린 속도로 보낼 것인가? 아니면 각 Subscriber에게 보내지 않은 데이터를 저장할 별도의 큐를 가질 것인가?
+  * 큐가 너무 커지면 어떻게 해야할까?
+  * Subscriber가 준비가 안 되었다면 큐의 데이터를 폐기할 것인가?
+이런 결정은 데이터의 성격에 따라 달라진다.
+  
+## 15.6 리액티브 시스템 vs 리액티브 프로그래밍
+#### 리액티브 시스템
+* 런타입 환경이 변화에 대응하도록 전체 아키텍처가 설계된 프로그램.
+* 반응성(responsive), 회복성(resilient), 탄력성(elastic)으로 세 가지 속성을 가진다.
+* 반응성은 리액티브 시스템이 큰 작업을 처리하느라 간단한 질의의 응답을 지연하지 않고 실시간으로 입력에 반응하는 것이다.
+* 회복성은 한 컴포넌트의 실패로 전체 시스템이 실패하지 않음을 의미한다.
+* 탄력성은 시스템이 잣긴의 작업 부하에 맞게 적응하며 작업을 효율적으로 처리함을 의미
+#### 리액티브 프로그래밍
+* 리액티브 시스템이 가지는 속성을 구현하기 위한 프로그래밍 형식을 의미한다.
+* java.util.concurrent.Flow 관련된 자바 인터페이스에서 제공하는 리액티브 프로그래밍 형식.
+* 이들 인터페이스 설계는 메시지 주도(message-driven) 속성을 반영한다.
+* 정리하자면 리액티브 시스템은 전체적인 리액티브 환경 아키텍처를 의미하며 리액티브 프로그래밍은 리액티브 환경을 위해 사용하는 프로그래밍 기법이다. 리액티브 프로그래밍을 이용해 리액티브 시스템을 구현할 수 있다.

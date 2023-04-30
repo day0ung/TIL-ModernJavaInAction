@@ -33,13 +33,65 @@ public class Shop{
 ```
 getPrice 메서드는 상점의 데이터 베이스를 이용해서 가격 정보를 얻는 동시에 다른 외부서비스에도 접근할 것이다. 
 #### 동기 메서드를 비동기 메서드로 변환
-동기 메서드를 CompletableFuture를 통해 비동기 메서드로 변환할 수 있다. 비동기 계산과 완료 결과를 포함하는 CompletableFuture 인스턴스를 만들고 완료 결과를 complete 메서드로 전달하여 CompletableFuture를 종료할 수 있다.
-
+동기 메서드를 CompletableFuture를 통해 비동기 메서드로 변환할 수 있다. 비동기 계산과 완료 결과를 포함하는 CompletableFuture 인스턴스를 만들고 완료 결과를 complete 메서드로 전달하여 CompletableFuture를 종료할 수 있다.<sub> 예제코드 Shop.class getPriceAsync()</sub>  
+비동기 API를 사용하는 예제를 확일할수 있다. 가격 계산이 끝나기 전에 getPriceAsync()가 바노한되는 사실을 확인할 수 있다. 
 > **예제코드**   
 > - <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter16/application/Shop.java">Shop</a>  
 > - <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter16/application/ShopMain.java">ShopMain</a>
 
+#### 에러 처리 방법
+위 로직에서 가격을 계산하는 동안 에러가 발생한다면 어떻게 될까?
+
+예외가 발생하면 해당 스레드에만 영향을 미치기 때문에 클라이언트는 get 메서드가 반환될 때까지 영원히 기다릴 수도 있다.  
+따라서 타임아웃을 활용해 예외처리를 하고, completeExceptionally 메서드를 이용해 CompletableFuture 내부에서 발생한 에외를 클라이언트로 전달해야 한다.
+```java
+public Future<Double> getPriceAsync(String product) {
+  CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+  new Thread(() -> {
+    try {
+      double price = calculatePrice(product);
+      futurePrice.complete(price);
+    } catch {
+      futurePrice.completeExceptionally(ex); //에러를 포함시켜 Future를 종료
+    }
+  }).start();
+  return futurePrice;
+}
+```
+#### 팩토리 메서드 supplyAsync로 CompletableFuture만들기 
+좀 더 간단하게 CompletableFuture를 만드는 방법도 있다.
+```java
+public Future<Double> getPriceAsync(String product) {
+  return CompletableFuture.supplyAsync(() -> calculatePrice(product));
+}
+```
+supplyAsync 메서드는 Supplier를 인수로 받아서 CompletableFuture를 반환한다.
+
+ForkJoinPool의 Executor 중 하나가 Supplier를 실행하며, 두 번째 인수로 다른 Executor를 지정할 수도 있다.
 ## 16.3 비블록 코드 만들기
+다음과 같은 상점 리스트가 있다.  
+```java
+List<Shop> shops = Arrays.asList(new Shop("BestPrice"),
+                                 new Shop("LetsSaveBig"),
+                                 new Shop("MyFavoriteShop"),
+                                 new Shop("BuyItAll"));
+```
+그리고 다음처럼 제품명을 입력하면 상점 이름과 제품 가격 문자열을 반환하는 List를 구현해야 한다.
+```java
+public List<String> findPrices(String product);
+```
+스트림을 이용하면 원하는 동작을 구현할 수 있다
+```java
+public List<String> findPrices(String product) {
+  return shops.stream()
+    .map(shop -> String.format("%s price is %.2f", shop.getName(), shop.getPrice(product)))
+    .collect(toList());
+}
+// 네 개의 상점에서 각각 가격을 검색하는 동안 블록되는 시간이 발생할 것이다.
+```
+#### 병렬 스트림으로 요청 병렬화하기
+#### CompletableFutue로 비동기 호출 구현하기
+
 ## 16.4 비동기 작업 파이프라인 만들기
 ## 16.5 CompletableFuture의 종료에 대응하는 방법
 ## 

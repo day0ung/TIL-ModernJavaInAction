@@ -90,8 +90,79 @@ public List<String> findPrices(String product) {
 // 네 개의 상점에서 각각 가격을 검색하는 동안 블록되는 시간이 발생할 것이다.
 ```
 #### 병렬 스트림으로 요청 병렬화하기
+이제 네 개의 상점에서 병렬로 검색이 진행되므로 시간은 하나의 상점에서 가격을 검색하는 정도만 소요될 것이다.
+```java
+public List<String> findPrices(String product) {
+  return shops.parallelStream()
+    .map(shop -> String.format("%s price is %.2f", shop.getName(), shop.getPrice(product)))
+    .collect(toList());
+}
+```
 #### CompletableFutue로 비동기 호출 구현하기
+이번에는 findPrices 메서드의 호출을 비동기로 바꿔보자.
+```java
+List<CompletableFuture<String>> priceFutures = 
+  shops.stream()
+    .map(shop -> CompletableFuture.suppltAsync(
+      () -> String.format("%s price is %.2f", shop.getName(), shop.getPrice(product)))
+    .collect(toList());
+}
+```
+위 코드로 List<CompletableFuture<String>>를 얻을 수 있고, 리스트의 CompletableFuture는 각각 계산 결과가 끝난 상점의 이름 문자열을 포함한다.
 
+하지만 우리는 List<String> 형식을 얻어야 하므로 모든 CompletableFuture의 동작이 완료되고 결과를 추출한 다음 리스트를 반환해야 한다.
+```java
+public List<String> findPrices(String product) {
+  List<CompletableFuture<String>> priceFutures = 
+    shops.stream()
+      .map(shop -> CompletableFuture.suppltAsync(
+        () -> shop.getName() + "price is " + shop.getPrice(product)))
+      .collect(toList());
+      
+  return priceFutures.stream()
+    .map(CompletableFuture::join) //모든 비동기 동작이 끝나길 대기
+    .collect(toList());
+}
+```
+두 map 연산을 하나의 스트림 처리 파이프라인이 아닌, 두 개의 파이프라인으로 처리했다는 사실에 주목하자.
+
+스트림 연산은 게으른 특성이 있으므로 하나의 파이프라인으로 처리했다면 모든 가격 정보 요청 동작이 동기적, 순차적으로 이루어지게 된다.
+* ![](./img/162.png) Sequentail(순차), Parallel(병렬)
+* 스트림의 게으름 때문에 순차 계산이 일어나는 이유와 순차 계산을 회피하는 방법
+* CompletableFuture를 사용한 결과는 순차 방식보단 빠르지만 병렬 스트림보단 느리다. 어떻게 개선할 수 있을까?
+
+#### 더 확장성이 좋은 해결방법
+* 병렬 스트림 버전에서는 4개의 스레드에 4개의 작업을 병렬로 수행하면서 검색 시간을 최소화했다.
+* 하지만 작업이 5개가 된다면, 4개 중 하나의 스레드가 완료된 후에 추가로 5번째 질의를 수행할 수 있다.
+* CompletableFuture는 병렬 스트림에 비해 작업에 이용할 수 있는 Executor를 지정할 수 있다는 장점이 있다.
+#### 커스텀 Executor 사용하기 
+실제로 필요한 작업량을 고려한 풀에서 관리하는 스레드 수에 맞게 Executor를 만들면 좋을 것 같다.
+
+풀에서 관리하는 스레드 수는 어떻게 결정할 수 있을까?
+> 스레드 풀 크기조절
+> Nthread = Ncpu * Ucpu * (1 + W/C)
+> - Ncpu : Runtime.getRuntime().availableProcessors()가 반환하는 코어 수
+> - Ucpu : 0과 1 사이의 값을 갖는 CPU 활용 비율
+> - W/C : 대기시간과 계산시간의 비율
+
+* 한 상점에 하나의 스레드가 할당될 수 있도록, 상점 수만큼 Executor를 설정한다.
+* 서버 크래시 방지를 위해 하나의 Executor에서 사용할 스레드의 최대 개수는 100 이하로 설정한다.
+```java
+private final Executor executor = Executors.newFixedThreadPool(Math.min(shops.size(), 100), //상점 수만큼의 스레드를 갖는 풀 생성(0~100 사이)
+    new ThreadFactory() {
+  public Thread new Thread(Runnable r) {
+    Thread t = new Thread(r);
+    t.setDeamon(true); //프로그램 종료를 방해하지 않는 데몬 스레드 사용
+    return t;
+  }
+});
+
+```
+우리가 만드는 풀은 데몬 스레드를 포함한다. 자바에서 일반 스레드가 실행중이면 자바 프로그램은 종료되지 않는다.  
+데몬 스레드를 사용하면 자바 프로그램이 종료될 때 강제로 스레드 실행이 종료될 수 있다.
+
+> 스트림 병렬화와 CompletableFuture 병렬화
+> * I/O가 포함되는 않은 계산 중심의 동작을 실행할 때는 스트림 인터페이스가 가장 구현하기 간단하며 효율적일 수 있다.
+> * I/O를 기다리는 작업을 병렬로 실행할 때는 CompletableFuture가 더 많은 유연성을 제공하며, 대기/계산의 비율에 적합한 스레드 수를 설정할 수 있다. 스트림의 게으른 특성 때문에 스트림에서 I/O를 실제로 언제 처리할지 예측하기 어려운 문제도 있다.
 ## 16.4 비동기 작업 파이프라인 만들기
 ## 16.5 CompletableFuture의 종료에 대응하는 방법
-## 

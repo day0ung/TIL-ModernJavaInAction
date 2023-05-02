@@ -1,10 +1,11 @@
-package chapter16.application;
+package chapter16.example162;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ShopMain {
     public static void main(String[] args) {
+        //비동기 API사용
         Shop shop = new Shop("BestShop");
         long start = System.nanoTime();
         Future<Double> futurePrice = shop.getPriceAsync("my favorite product");

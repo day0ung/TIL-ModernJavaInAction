@@ -1,10 +1,9 @@
-package chapter16.application;
+package chapter16.example164;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-//16.2 비동기 API구현
 public class Shop {
     private final String name;
     private final Random random;
@@ -14,11 +13,24 @@ public class Shop {
         random = new Random(name.charAt(0) * name.charAt(1) * name.charAt(2));
     }
 
+    public String getName() {
+        return name;
+    }
 
-    // 제품명에 해당하는 가격을 반환
-    public double getPrice(String product){
+
+
+    // 제품명에 해당하는 가격을 반환 기존 16.2 버전에서 변경
+    // 미리 계산된 임의의 가격과 임의의 DisCount.Code 반환
+    public String getPrice(String product){
+        double price = calculatePrice(product);
+        Discount.Code code = Discount.Code.values()[random.nextInt(Discount.Code.values().length)];
+        return String.format("%s:%.2f:%s", name, price, code);
+    }
+
+    public double getPriceDouble(String product){
         return calculatePrice(product);
     }
+
 
     //임의의 계산값을 반환하도록
     private double calculatePrice(String product) {
@@ -36,15 +48,6 @@ public class Shop {
         }
     }
 
-    //16.2.1 동기 메서드를 비동기 메서드로 변환
-    public Future<Double> getPriceAsync(String product) {
-        CompletableFuture<Double> futurePrice = new CompletableFuture<>(); //계산결과를 포함할 CompletableFuture생성
-        new Thread(() -> {
-            double price = calculatePrice(product);  //다른 스레드에서 비동기적으로 계산수행
-            futurePrice.complete(price); // 오랜 시간이 걸리는 계산이 완료되면 Future에 값을 설정
-        }).start();
-        return futurePrice; //계산결과가 완료되길 기다리지 않고 반환
-    }
 
 
 }

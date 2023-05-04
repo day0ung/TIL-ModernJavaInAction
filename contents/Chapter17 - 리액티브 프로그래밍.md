@@ -94,5 +94,41 @@ public interface Processor<T, R> extends Flow.Subscriber<T>, Flow.Publisher<R> {
 > * <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter17/TempInfo.java">TempInfo</a>  - 현재 보고된 온도를 전달하는 자바빈
 > * <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter17/TempSubscription.java">TempSubscription</a> - Subscriber에게 TempInfo 스트림을 전송하는 Subscription 
 > * <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter17/TempSubscriber.java">TempSubscriber</a> - 받은 온도를 출력하는 Subscriber
+> * <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter17/Main.java">Main</a> - Publisher를 만들고 TempSubscriber를 이용해 Publisher에 구독하도록 구현
+> * <a href="https://github.com/day0ung/ModernJavaInAction/blob/main/java_code/modern_java/src/chapter17/TempProcessor.TempProcessor">Main</a> - 화씨를 섭씨로 변환하는 Processor
+
 
 ## 17.3 리액티브 라이브러리 RxJava사용하기 
+* 넷플릭스에서 개발한 라이브러리로 자바에서 리액티프 애플리케이션을 구현하는 데 사용한다.
+* RxJava는 Flow.Publisher를 구현하는 두 클래스를 제공한다.
+  * io.reactivex.Flowable : 역압력을 지원하는 Flow
+  * io.reactivex.Observable : 역압력을 지원하지 않는 Flow.
+* 천 개 이하의 요소를 가진 스트림이나 마우스 움직임, 터치 이벤트 등 역압력을 적용하기 힘든 GUI 이벤트, 자주 발생하지 않는 종류의 이벤트에는 역압력을 적용하지 말 것을 권장한다.
+
+#### Observable 만들고 사용하기
+Observable, Flowable 클래스는 다양한 종류의 리액티브 시스템을 편리하게 만들 수 있도록 여러 팩토리 메서드를 제공한다. just()와 interval() 팩토리 메서드를 사용하면 요소를 직접 지정해 이를 방출하도록 지정할 수 있다.
+* Observable.just() :  팩토리 메서드는 한개 이상의 요소를 이용해 이를 방출하는 Observable로 변환
+  * ```java
+    Observable<String> strings = Observable.just("first", "second");
+    ```
+  * Observable의 구독자는 onNext("first"), onNext("second").onComplete()의 순서로 메시지를 받는다.  
+
+* Observable.interval(): 사용자와 실시간으로 상호작용 하면서 지정된 속도로 이벤트를 방출하는 상황에서 유용하게 사용하는 메서드
+    * ```java
+      Observable<Long> onePerSec = Observable.interval(1, TimeUnit.SECONDS);
+      ```
+    * 0에서 시작해 1초 간격으로 long형식의 값을 무한으로 증가 시키며 값을 방출하는 Observable
+
+***Observable 인터페이스***
+```java
+public interface Observer<T> {
+	void onSubscribe(Disposable d);
+	void onNext(T t);
+	void onError(Throwable t);
+	void onComplete();
+}
+```
+#### Observable을 변환하고 합치기
+자바 9 플로 API의 Flow.Processor는 한 스트림을 다른 스트림의 입력으로 사용할 수 있었다. 하지만 스트림을 합치고, 만들고, 거스는 등의 복잡한 작업을 구현하기는 매우 어려운 일이다. RxJava의 Observable 클래스는 앞서 언급한 복잡한 작업에 대하여 쉽게 처리할 수 있는 다양한 기능들을 제공한다.
+
+이런 함수들을 documents의 설명으로만은 이해하기 상당히 어렵기에 마블 다이어그램이라는 시각적 방법을 이용해 이해를 돕는다. rxmarbles.com 사이트는 RxJava의 Observables의 스트림의 요소 위치를 직접 옮겨가며 결과를 확인 메서드의 동작을 마블 다이어그램으로 확인할 수 있도록 도와준다. documents와 함께 참고하자.
